@@ -3,805 +3,473 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SOXL HUNTER 🎯</title>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<title>SOXL HUNTER</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #06080c;
-  --card: #0d1117;
-  --border: #1b2332;
-  --accent: #00e5ff;
-  --accent2: #7c4dff;
-  --green: #00e676;
-  --red: #ff1744;
-  --orange: #ff9100;
-  --yellow: #ffd600;
-  --text: #c9d1d9;
-  --dim: #484f58;
-  --radius: 12px;
-}
+:root{--bg:#0a0a0a;--card:#141414;--card2:#1a1a1a;--border:#2a2a2a;--accent:#3b82f6;--green:#22c55e;--red:#ef4444;--text:#f5f5f5;--dim:#666;--radius:16px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;min-height:100vh;padding:16px;max-width:500px;margin:0 auto}
+.hdr{text-align:center;padding:28px 0 20px}
+.hdr h1{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:800;letter-spacing:3px;color:var(--accent)}
+.hdr p{font-size:11px;color:var(--dim);margin-top:6px;letter-spacing:2px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px}
+.ct{font-size:11px;color:var(--dim);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px}
+.ir{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.ir label{font-size:14px;color:var(--dim);width:80px;font-weight:600}
+.ir input{flex:1;background:#0d0d0d;border:2px solid var(--border);border-radius:12px;padding:12px 16px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:700;text-align:right;outline:none;-webkit-appearance:none}
+.ir input:focus{border-color:var(--accent)}
+.ir .u{font-size:14px;color:var(--dim);width:16px;font-weight:700}
 
-* { margin:0; padding:0; box-sizing:border-box; }
+.tier{text-align:center;padding:20px;margin-bottom:14px;background:linear-gradient(135deg,#1a1a2e,#16213e);border-radius:var(--radius);border:1px solid #1e3a5f}
+.tier .n{font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:800;color:var(--accent)}
+.tier .s{font-size:13px;color:var(--dim);margin-top:6px;font-weight:600}
 
-body {
-  background: var(--bg);
-  color: var(--text);
-  font-family: 'IBM Plex Mono', monospace;
-  min-height: 100vh;
-  padding: 12px;
-  max-width: 520px;
-  margin: 0 auto;
-}
+.order{border-radius:14px;padding:16px;margin-bottom:10px;border:1px solid var(--border)}
+.order.buy{background:linear-gradient(135deg,#0c1a2e,#141414);border-color:#1e3a5f}
+.order.sell-g{background:linear-gradient(135deg,#0c2e1a,#141414);border-color:#1a5f3a}
+.order.sell-r{background:linear-gradient(135deg,#2e0c0c,#141414);border-color:#5f1a1a}
+.order .lbl{font-size:11px;color:var(--dim);font-weight:700;letter-spacing:1px}
+.order .val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:800;color:var(--text);margin-top:4px}
+.order .desc{font-size:12px;color:var(--dim);margin-top:4px;font-weight:500}
 
-.header {
-  text-align: center;
-  padding: 20px 0 16px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 16px;
-  position: relative;
-}
+.loc-box{background:var(--card2);border-radius:var(--radius);padding:18px;margin-bottom:14px;border:1px solid var(--border)}
+.loc-title{font-size:14px;font-weight:700;color:var(--accent);margin-bottom:14px;display:flex;align-items:center;gap:8px}
 
-.header h1 {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 24px;
-  font-weight: 900;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: 2px;
-}
+.btn{width:100%;padding:14px;border:none;border-radius:14px;font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.5px}
+.btn:active{transform:scale(0.97)}
+.btn-b{background:var(--accent);color:#fff}
+.btn-g{background:var(--green);color:#fff}
+.btn-r{background:var(--red);color:#fff}
+.btn-x{background:none;border:1px solid #333;color:#666;font-size:12px;padding:10px;margin-top:14px}
 
-.header .sub {
-  font-size: 10px;
-  color: var(--dim);
-  margin-top: 4px;
-  letter-spacing: 1px;
-}
+.pi{background:var(--card2);border-radius:12px;padding:14px;margin-bottom:10px;border:1px solid var(--border)}
+.pp{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:800}
 
-.card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 14px;
-  margin-bottom: 12px;
-}
+.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:14px 0}
+.sb{background:var(--card);border-radius:12px;padding:14px;text-align:center;border:1px solid var(--border)}
+.sb .v{font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:800}
+.sb .l{font-size:10px;color:var(--dim);margin-top:4px;font-weight:700;letter-spacing:1px}
 
-.card-title {
-  font-size: 11px;
-  color: var(--dim);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 10px;
-}
+.tabs{display:flex;gap:4px;margin-bottom:16px;background:var(--card);border-radius:14px;padding:4px;border:1px solid var(--border)}
+.tab{flex:1;padding:10px;border:none;border-radius:12px;background:none;color:var(--dim);font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;cursor:pointer}
+.tab.on{background:var(--accent);color:#fff}
 
-.input-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-}
+.ti{font-size:12px;padding:6px 0;border-bottom:1px solid var(--border);font-weight:600;font-family:'JetBrains Mono',monospace}
 
-.input-row label {
-  font-size: 11px;
-  color: var(--dim);
-  width: 85px;
-  flex-shrink: 0;
-}
-
-.input-row input {
-  flex: 1;
-  background: #0a0e14;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  padding: 8px 12px;
-  color: #fff;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 600;
-  text-align: right;
-  outline: none;
-  transition: border 0.2s;
-}
-
-.input-row input:focus {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(0,229,255,0.1);
-}
-
-.input-row .unit {
-  font-size: 11px;
-  color: var(--dim);
-  width: 30px;
-}
-
-.zone-bar {
-  display: flex;
-  gap: 3px;
-  margin: 10px 0;
-}
-
-.zone-bar div {
-  flex: 1;
-  height: 6px;
-  border-radius: 3px;
-  background: #1b2332;
-  transition: all 0.3s;
-}
-
-.zone-bar div.active { transform: scaleY(1.5); }
-
-.signal-box {
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 12px;
-  position: relative;
-  overflow: hidden;
-}
-
-.signal-box::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-}
-
-.signal-buy {
-  background: linear-gradient(180deg, rgba(0,229,255,0.08), var(--card));
-  border: 1px solid rgba(0,229,255,0.2);
-}
-.signal-buy::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
-
-.signal-sell {
-  background: linear-gradient(180deg, rgba(255,23,68,0.08), var(--card));
-  border: 1px solid rgba(255,23,68,0.2);
-}
-.signal-sell::before { background: var(--red); }
-
-.big-number {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 28px;
-  font-weight: 900;
-  color: #fff;
-}
-
-.btn {
-  width: 100%;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  font-family: inherit;
-  font-size: 14px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.5px;
-}
-
-.btn:active { transform: scale(0.98); }
-
-.btn-buy {
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  color: #fff;
-}
-
-.btn-sell-profit {
-  background: var(--green);
-  color: #000;
-}
-
-.btn-sell-loss {
-  background: var(--red);
-  color: #fff;
-}
-
-.btn-refresh {
-  background: rgba(0,229,255,0.08);
-  border: 1px solid rgba(0,229,255,0.3);
-  color: var(--accent);
-}
-
-.pos-item {
-  background: #0a0e14;
-  border-radius: 8px;
-  padding: 10px 12px;
-  margin-bottom: 6px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.pos-pnl {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 16px;
-  font-weight: 700;
-}
-
-.trade-item {
-  font-size: 11px;
-  padding: 4px 0;
-  border-bottom: 1px solid #111;
-}
-
-.badge {
-  display: inline-block;
-  padding: 2px 8px;
-  border-radius: 4px;
-  font-size: 10px;
-  font-weight: 600;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.stat-box {
-  background: #0a0e14;
-  border-radius: 8px;
-  padding: 10px;
-  text-align: center;
-}
-
-.stat-box .val {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 18px;
-  font-weight: 700;
-  color: #fff;
-}
-
-.stat-box .lbl {
-  font-size: 10px;
-  color: var(--dim);
-  margin-top: 2px;
-}
-
-.guide-toggle {
-  width: 100%;
-  padding: 10px;
-  background: none;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  color: var(--dim);
-  font-family: inherit;
-  font-size: 11px;
-  cursor: pointer;
-  margin-bottom: 12px;
-}
-
-.guide-content {
-  font-size: 11px;
-  line-height: 1.8;
-  color: var(--dim);
-}
-
-.guide-content b { color: var(--text); }
-
-.hidden { display: none; }
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate { animation: fadeIn 0.3s ease; }
-
-.tab-bar {
-  display: flex;
-  gap: 4px;
-  margin-bottom: 12px;
-  background: var(--card);
-  border-radius: 10px;
-  padding: 4px;
-  border: 1px solid var(--border);
-}
-
-.tab {
-  flex: 1;
-  padding: 8px;
-  border: none;
-  border-radius: 8px;
-  background: none;
-  color: var(--dim);
-  font-family: inherit;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.tab.active {
-  background: rgba(0,229,255,0.1);
-  color: var(--accent);
-}
+.hidden{display:none}
+.info{font-size:13px;color:var(--dim);text-align:center;font-weight:500;padding:20px 0}
+.warn{background:#1a1a00;border:1px solid #4a4a00;border-radius:12px;padding:14px;text-align:center;color:#fbbf24;font-size:14px;font-weight:600;margin-bottom:14px}
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>🎯 SOXL HUNTER</h1>
-  <div class="sub">20D HIGH · 20 UNITS · LOC 3% · 7D FORCE</div>
+<div class="hdr">
+  <h1>SOXL HUNTER</h1>
+  <p>LOC 2 · UP 2 · DN 5 · 20U · 3% · 7D MOC</p>
 </div>
 
-<!-- 탭 -->
-<div class="tab-bar">
-  <button class="tab active" onclick="showTab('main')">📊 매매</button>
-  <button class="tab" onclick="showTab('positions')">📦 포지션</button>
-  <button class="tab" onclick="showTab('history')">📜 기록</button>
-  <button class="tab" onclick="showTab('guide')">📖 가이드</button>
+<div class="tabs">
+  <button class="tab on" onclick="sTab('main',this)">매매</button>
+  <button class="tab" onclick="sTab('pos',this)">티어</button>
+  <button class="tab" onclick="sTab('hist',this)">기록</button>
+  <button class="tab" onclick="sTab('guide',this)">가이드</button>
 </div>
 
-<!-- 메인 탭 -->
 <div id="tab-main">
-
-  <!-- 시드 설정 -->
   <div class="card">
-    <div class="card-title">💰 시드 설정</div>
-    <div class="input-row">
-      <label>총 자산</label>
-      <input type="number" id="seed" value="1000" onchange="save(); calc()">
-      <span class="unit">만원</span>
+    <div class="ct">설정</div>
+    <div class="ir">
+      <label>시드</label>
+      <input type="number" id="seed" value="20000" oninput="sv();go()">
+      <span class="u">$</span>
     </div>
-    <div style="font-size:10px; color:var(--dim); text-align:right">
-      1유닛 = <span id="unit-won">50</span>만원 (5%)
+    <div class="ir">
+      <label>전날종가</label>
+      <input type="number" step="0.01" id="prev" placeholder="90.00" oninput="go()">
+      <span class="u">$</span>
+    </div>
+    <div style="font-size:12px;color:var(--dim);text-align:right;font-weight:600;font-family:'JetBrains Mono',monospace">
+      1u = $<span id="i-uw">1000</span> · 2u = <span id="i-s2">22</span>주 · 5u = <span id="i-s5">55</span>주
     </div>
   </div>
 
-  <!-- 시장 데이터 -->
-  <div class="card">
-    <div class="card-title">📊 오늘 시장 데이터</div>
-    <div class="input-row">
-      <label>현재가(종가)</label>
-      <input type="number" step="0.01" id="price" placeholder="94.68" onchange="calc()">
-      <span class="unit">$</span>
-    </div>
-    <div class="input-row">
-      <label>어제 종가</label>
-      <input type="number" step="0.01" id="prev-close" placeholder="88.37" onchange="calc()">
-      <span class="unit">$</span>
-    </div>
-    <div class="input-row">
-      <label>20일 최고가</label>
-      <input type="number" step="0.01" id="high20" placeholder="94.34" onchange="calc()">
-      <span class="unit">$</span>
-    </div>
-  </div>
+  <div id="out"></div>
 
-  <!-- 분석 결과 -->
-  <div id="analysis" class="hidden"></div>
-
+  <button class="btn btn-x" onclick="resetAll()">전체 초기화</button>
 </div>
 
-<!-- 포지션 탭 -->
-<div id="tab-positions" class="hidden">
-  <div id="positions-list"></div>
-</div>
-
-<!-- 기록 탭 -->
-<div id="tab-history" class="hidden">
-  <div id="history-list"></div>
-</div>
-
-<!-- 가이드 탭 -->
+<div id="tab-pos" class="hidden"><div id="pos-out"></div></div>
+<div id="tab-hist" class="hidden"><div id="hist-out"></div></div>
 <div id="tab-guide" class="hidden">
-  <div class="card">
-    <div class="guide-content">
-      <b style="color:var(--accent); font-size:14px">🎯 SOXL HUNTER v2</b><br><br>
-      
-      <b>📥 매수 규칙</b><br>
-      • 매일 장 마감 전 체크<br>
-      • 20일 최고가 대비 낙폭 확인<br>
-      • 하락일: 4/6/8/10 유닛<br>
-      • 상승일: 2/3/4/5 유닛 (절반)<br>
-      • 총 20유닛까지<br><br>
-      
-      <b>📤 매도 규칙</b><br>
-      • 종가 ≥ 매수가×1.03 → LOC 매도<br>
-      • 7일 경과 → 무조건 LOC 매도<br>
-      • 각 포지션 독립 운영<br><br>
-      
-      <b>📊 구간별 유닛</b><br>
-      • 0~10%: 하락4 / 상승2<br>
-      • 10~25%: 하락6 / 상승3<br>
-      • 25~40%: 하락8 / 상승4<br>
-      • 40%+: 하락10 / 상승5<br><br>
-      
-      <b>📈 백테스트 성과 (2020~2026)</b><br>
-      • CAGR: +106% | MDD: -61%<br>
-      • 1000만 → 7년 → 15.9억 (159배)<br>
-      • 승률: 76%<br><br>
-      
-      <b>❗ 핵심</b><br>
-      • 전부 LOC (종가) 매매<br>
-      • 갭다운 문제 없음<br>
-      • 감정 개입 없음<br>
-      • 매일 전일 총자산 ÷ 20 = 1유닛 (복리)
-    </div>
+  <div class="card" style="font-size:13px;line-height:2;color:var(--dim)">
+    <div style="color:var(--accent);font-size:16px;font-weight:700;margin-bottom:12px">SOXL HUNTER v6</div>
+    <b style="color:var(--text)">매수:</b> 매일 밤 LOC 2개<br>
+    ① 전날×1.15 → 무조건 체결 (2유닛)<br>
+    ② 전날-$0.01 → 하락만 체결 (3유닛)<br>
+    상승 = 2유닛 | 하락 = 5유닛<br><br>
+    <b style="color:var(--text)">매도:</b><br>
+    체결 직후 → 체결가×1.03 LOC 매도<br>
+    7일차 → LOC 취소 → MOC 매도<br><br>
+    <b style="color:var(--text)">성과 (2020~2026):</b><br>
+    CAGR +96% | MDD -54% | 111배<br>
+    $20,000 → 7년 → $2,220,000
   </div>
-</div>
 
-<div style="text-align:center; font-size:9px; color:#222; padding:20px 0">
-  SOXL HUNTER v2 · Not Financial Advice
+  <div class="card" style="padding:18px 12px">
+    <div class="ct">연도별 수익률 & MDD</div>
+    <div id="chart1" style="position:relative;height:280px;margin-top:10px"></div>
+  </div>
+
+  <div class="card" style="padding:18px 12px">
+    <div class="ct">$20,000 복리 성장</div>
+    <div id="chart2" style="position:relative;height:220px;margin-top:10px"></div>
+  </div>
 </div>
 
 <script>
-const TOTAL_UNITS = 20;
-const LOC_PCT = 0.03;
-const FORCED_DAYS = 7;
-const ZONES = [
-  { max:10, down:4, up:2, label:'0-10%', color:'var(--green)' },
-  { max:25, down:6, up:3, label:'10-25%', color:'var(--yellow)' },
-  { max:40, down:8, up:4, label:'25-40%', color:'var(--orange)' },
-  { max:999, down:10, up:5, label:'40%+', color:'var(--red)' },
-];
-
-let positions = [];
-let history = [];
-let seed = 1000;
-
-// 로컬 저장
-function save() {
-  seed = parseFloat(document.getElementById('seed').value) || 1000;
-  localStorage.setItem('hunter', JSON.stringify({ positions, history, seed }));
-}
-
-function load() {
-  try {
-    const d = JSON.parse(localStorage.getItem('hunter'));
-    if (d) {
-      positions = d.positions || [];
-      history = d.history || [];
-      seed = d.seed || 1000;
-      document.getElementById('seed').value = seed;
-    }
-  } catch(e) {}
-}
-
-function getZone(dd) {
-  const d = Math.abs(dd);
-  for (const z of ZONES) if (d < z.max) return z;
-  return ZONES[ZONES.length-1];
-}
-
-function today() {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-}
-
-function daysBetween(d1, d2) {
-  return Math.floor((new Date(d2) - new Date(d1)) / 86400000);
-}
-
-function calc() {
-  const price = parseFloat(document.getElementById('price').value) || 0;
-  const prevClose = parseFloat(document.getElementById('prev-close').value) || 0;
-  const high20 = parseFloat(document.getElementById('high20').value) || 0;
+function drawCharts(){
+  const yrs=['20','21','22','23','24','25','26'];
+  const rets=[161,143,-16,111,151,101,55];
+  const mdds=[-54,-20,-52,-33,-30,-51,-21];
   
-  seed = parseFloat(document.getElementById('seed').value) || 1000;
-  const unitWon = seed / TOTAL_UNITS;
-  document.getElementById('unit-won').textContent = unitWon.toFixed(0);
+  // Chart 1: 수익률 + MDD 바
+  const el1=document.getElementById('chart1');
+  const maxR=Math.max(...rets);
+  const minR=Math.min(...mdds);
+  const total=maxR-minR;
   
-  if (!price || !high20) {
-    document.getElementById('analysis').classList.add('hidden');
-    return;
-  }
+  let html='<div style="position:relative;height:100%;display:flex;align-items:flex-end;gap:6px;padding:0 4px">';
   
-  const dd = ((price - high20) / high20 * 100);
-  const isDown = prevClose > 0 && price < prevClose;
-  const dailyChg = prevClose > 0 ? ((price - prevClose) / prevClose * 100) : 0;
-  const zone = getZone(dd);
-  const units = isDown ? zone.down : zone.up;
-  const totalInvested = positions.reduce((s,p) => s + p.units, 0);
-  const canBuy = totalInvested < TOTAL_UNITS;
-  const actualUnits = Math.min(units, TOTAL_UNITS - totalInvested);
-  const buyAmount = actualUnits * unitWon;
-  const targetPrice = (price * 1.03).toFixed(2);
-  
-  // 매도 체크
-  const sells = positions.filter(p => {
-    const pnl = (price - p.entry) / p.entry;
-    const days = daysBetween(p.date, today());
-    return pnl >= LOC_PCT || days >= FORCED_DAYS;
-  });
-  
-  let html = '';
-  
-  // 매도 신호
-  if (sells.length > 0) {
-    html += '<div class="signal-box signal-sell animate">';
-    html += `<div style="font-size:14px;font-weight:700;color:var(--red);margin-bottom:10px">📤 매도 ${sells.length}건</div>`;
-    sells.forEach(p => {
-      const pnl = ((price - p.entry) / p.entry * 100);
-      const days = daysBetween(p.date, today());
-      const isTP = (price - p.entry) / p.entry >= LOC_PCT;
-      const reason = isTP ? '💰 LOC3%' : '⏰ 7일강제';
-      const profitWon = (pnl / 100 * p.units * unitWon).toFixed(0);
-      html += `<div class="pos-item">
-        <div>
-          <div style="font-size:12px;font-weight:600">${reason}</div>
-          <div style="font-size:10px;color:var(--dim)">$${p.entry} → $${price} | ${p.units}u | ${days}일</div>
-          <div style="font-size:10px;color:var(--dim)">수익: ${profitWon}만원</div>
-        </div>
-        <div class="pos-pnl" style="color:${pnl>=0?'var(--green)':'var(--red)'}">
-          ${pnl>=0?'+':''}${pnl.toFixed(1)}%
-        </div>
-      </div>`;
-      html += `<button class="btn ${pnl>=0?'btn-sell-profit':'btn-sell-loss'}" 
-        onclick="executeSell(${p.id},'${isTP?'LOC3%':'7일강제'}',${price})" 
-        style="margin-bottom:8px">매도 완료 ✓</button>`;
-    });
-    html += '</div>';
-  }
-  
-  // 시장 상태
-  html += `<div class="card animate">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div>
-        <div style="font-size:10px;color:var(--dim)">${today()}</div>
-        <div class="big-number">$${price}</div>
-      </div>
-      <div style="text-align:right">
-        <div style="font-size:20px;font-weight:700;color:${isDown?'var(--red)':'var(--green)'}">
-          ${dailyChg>=0?'+':''}${dailyChg.toFixed(1)}%
-        </div>
-        <div style="font-size:12px;font-weight:600;color:${isDown?'var(--red)':'var(--green)'}">
-          ${isDown?'📉 하락일':'📈 상승일'}
-        </div>
-      </div>
-    </div>
-    <div style="margin-top:10px;display:flex;justify-content:space-between;font-size:10px;color:var(--dim)">
-      <span>20일 고점 $${high20}</span>
-      <span style="color:${zone.color};font-weight:700">낙폭 ${dd.toFixed(1)}% [${zone.label}]</span>
-    </div>
-    <div class="zone-bar">
-      ${ZONES.map(z => `<div style="background:${z===zone?z.color:'#1b2332'}" class="${z===zone?'active':''}"></div>`).join('')}
-    </div>
+  // 0% 라인 위치
+  const zeroBot=Math.abs(minR)/total*100;
+  html+=`<div style="position:absolute;left:0;right:0;bottom:${zeroBot}%;border-top:1px solid #444;z-index:1">
+    <span style="position:absolute;left:0;top:-8px;font-size:9px;color:#555;font-family:JetBrains Mono">0%</span>
   </div>`;
   
-  // 매수 신호
-  if (canBuy && actualUnits > 0) {
-    html += `<div class="signal-box signal-buy animate">
-      <div style="font-size:12px;color:var(--accent);font-weight:600;margin-bottom:8px">📥 매수 신호</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div class="big-number">${actualUnits}유닛 = ${buyAmount.toFixed(0)}만</div>
-        <span class="badge" style="background:${zone.color}22;color:${zone.color}">
-          ${isDown?'하락':'상승'} · ${zone.label}
-        </span>
-      </div>
-      <div style="font-size:11px;color:var(--dim)">
-        LOC 매수 @ $${price} | 목표 $${targetPrice} | 강제 7일
-      </div>
-      <div style="font-size:11px;color:var(--dim);margin-bottom:10px">
-        투입: ${totalInvested}+${actualUnits}=${totalInvested+actualUnits}/${TOTAL_UNITS}유닛
-      </div>
-      <button class="btn btn-buy" onclick="executeBuy(${price},${actualUnits},'${zone.label}',${dd.toFixed(2)})">
-        ✅ 매수 기록
-      </button>
+  yrs.forEach((y,i)=>{
+    const r=rets[i], m=mdds[i];
+    const rH=Math.abs(r)/total*100;
+    const mH=Math.abs(m)/total*100;
+    const isNeg=r<0;
+    
+    html+=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative;height:100%">`;
+    
+    // 수익률 바 (0라인 위 또는 아래)
+    if(isNeg){
+      html+=`<div style="position:absolute;bottom:${zeroBot-rH}%;width:70%;height:${rH}%;background:#ef4444;border-radius:4px 4px 0 0;opacity:0.9"></div>`;
+      html+=`<div style="position:absolute;bottom:${zeroBot-rH-16}%;font-size:11px;font-weight:800;color:#ef4444;font-family:JetBrains Mono">${r}%</div>`;
+    } else {
+      html+=`<div style="position:absolute;bottom:${zeroBot}%;width:70%;height:${rH}%;background:#3b82f6;border-radius:4px 4px 0 0;opacity:0.9"></div>`;
+      html+=`<div style="position:absolute;bottom:${zeroBot+rH+4}%;font-size:11px;font-weight:800;color:#3b82f6;font-family:JetBrains Mono">+${r}%</div>`;
+    }
+    
+    // MDD 바 (항상 0 아래)
+    html+=`<div style="position:absolute;bottom:${zeroBot-mH}%;width:35%;height:${mH}%;background:#ef444466;border-radius:0 0 4px 4px;border:1px solid #ef444444;left:50%;transform:translateX(-50%)"></div>`;
+    html+=`<div style="position:absolute;bottom:${zeroBot-mH-14}%;font-size:9px;font-weight:700;color:#ef4444aa;font-family:JetBrains Mono">${m}%</div>`;
+    
+    // 연도 라벨
+    html+=`<div style="position:absolute;bottom:-18px;font-size:11px;color:#666;font-weight:700;font-family:JetBrains Mono">'${y}</div>`;
+    
+    html+=`</div>`;
+  });
+  
+  html+=`</div>`;
+  html+=`<div style="display:flex;gap:16px;justify-content:center;margin-top:24px;font-size:11px;font-weight:600">
+    <span><span style="display:inline-block;width:12px;height:12px;background:#3b82f6;border-radius:3px;vertical-align:middle;margin-right:4px"></span><span style="color:#888">수익률</span></span>
+    <span><span style="display:inline-block;width:12px;height:12px;background:#ef444466;border:1px solid #ef444444;border-radius:3px;vertical-align:middle;margin-right:4px"></span><span style="color:#888">MDD</span></span>
+  </div>`;
+  el1.innerHTML=html;
+  
+  // Chart 2: 복리 성장
+  const el2=document.getElementById('chart2');
+  const vals=[20000];
+  let cum=20000;
+  rets.forEach(r=>{cum*=(1+r/100);vals.push(Math.round(cum))});
+  const maxV=Math.max(...vals);
+  
+  let h2='<div style="position:relative;height:100%;display:flex;align-items:flex-end;gap:2px;padding:0 4px">';
+  
+  // 그리드
+  for(let g=0;g<4;g++){
+    const pct=g*33;
+    const val=maxV*(1-g/3);
+    let label;
+    if(val>=1000000) label=`$${(val/1000000).toFixed(1)}M`;
+    else if(val>=1000) label=`$${(val/1000).toFixed(0)}K`;
+    else label=`$${val.toFixed(0)}`;
+    h2+=`<div style="position:absolute;left:0;right:0;bottom:${100-pct}%;border-bottom:1px solid #1a1a1a">
+      <span style="position:absolute;left:0;bottom:2px;font-size:8px;color:#444;font-family:JetBrains Mono">${label}</span>
     </div>`;
-  } else if (!canBuy) {
-    html += `<div class="card animate" style="text-align:center;padding:20px;color:var(--orange)">
-      ⚠️ 20유닛 MAX — 매수 불가
+  }
+  
+  // 바
+  const labels=['시작','20','21','22','23','24','25','26'];
+  vals.forEach((v,i)=>{
+    const h=v/maxV*100;
+    const isDown=i>0&&vals[i]<vals[i-1];
+    h2+=`<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%">
+      <div style="font-size:8px;color:#888;font-family:JetBrains Mono;margin-bottom:2px;font-weight:700">
+        ${v>=1000000?'$'+(v/1000000).toFixed(1)+'M':'$'+(v/1000).toFixed(0)+'K'}
+      </div>
+      <div style="width:80%;height:${h}%;background:${isDown?'linear-gradient(180deg,#ef4444,#991b1b)':'linear-gradient(180deg,#3b82f6,#1d4ed8)'};border-radius:4px 4px 0 0;min-height:2px"></div>
+      <div style="font-size:9px;color:#666;margin-top:4px;font-weight:700;font-family:JetBrains Mono">'${labels[i]}</div>
     </div>`;
+  });
+  
+  h2+=`</div>`;
+  el2.innerHTML=h2;
+}
+
+// 가이드 탭 열 때 차트 그리기
+</script>
+
+<div style="text-align:center;font-size:10px;color:#333;padding:24px 0;font-family:'JetBrains Mono',monospace">SOXL HUNTER v6</div>
+
+<script>
+const TU=20,TP=0.03,FD=7,UP=2,DN=5;
+let pos=[],hist=[],seed=20000;
+
+function gv(id){return parseFloat(document.getElementById(id).value)||0}
+function td(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function db(a,b){return Math.floor((new Date(b)-new Date(a))/864e5)}
+
+function sv(){seed=gv('seed')||20000;localStorage.setItem('h6',JSON.stringify({pos,hist,seed}))}
+function ld(){try{const d=JSON.parse(localStorage.getItem('h6'));if(d){pos=d.pos||[];hist=d.hist||[];seed=d.seed||20000;document.getElementById('seed').value=seed;}}catch(e){}}
+
+function go(){
+  const pv=gv('prev');
+  seed=gv('seed')||20000;
+  const uw=seed/TU;
+  const el=document.getElementById('out');
+  
+  document.getElementById('i-uw').textContent=uw.toFixed(0);
+  
+  if(!pv){el.innerHTML='';return}
+  
+  const s2=Math.floor(uw*2/pv);
+  const s3=Math.floor(uw*3/pv);
+  const s5=Math.floor(uw*5/pv);
+  document.getElementById('i-s2').textContent=s2;
+  document.getElementById('i-s5').textContent=s5;
+  
+  const loc1=+(pv*1.15).toFixed(2);
+  const loc2=+(pv-0.01).toFixed(2);
+  const curPrice=pv; // 손익은 전날종가 기준 (대략)
+  const ti=pos.reduce((s,p)=>s+p.u,0);
+  const rem=TU-ti;
+  
+  let h='';
+  
+  // 티어 표시
+  h+=`<div class="tier">
+    <div style="font-size:11px;color:var(--dim);font-weight:700;letter-spacing:2px">투입</div>
+    <div class="n">${ti}/${TU}</div>
+    <div class="s">${ti===0?'대기 중':ti>=TU?'풀 투입':'매수 진행 중'} · 잔여 ${rem}u · ${pos.length}건</div>
+  </div>`;
+  
+  // 보유 티어 (매도 안내 포함)
+  if(pos.length>0){
+    h+=`<div class="card"><div class="ct">보유 티어</div>`;
+    pos.forEach((p,idx)=>{
+      const pnl=curPrice>0?((curPrice-p.e)/p.e*100):0;
+      const days=db(p.d,td());
+      const rem=FD-days;
+      const isForce=days>=FD;
+      const isTP=curPrice>=p.e*1.03;
+      
+      let sellInfo='', sellColor='var(--accent)', sellBtn='';
+      if(isTP){
+        sellInfo=`LOC $${p.tp} 체결! +${pnl.toFixed(1)}%`;
+        sellColor='var(--green)';
+        sellBtn=`<button class="btn btn-g" onclick="doSell(${p.id},'LOC3%',${curPrice})" style="padding:10px;font-size:13px;margin-top:8px">티어${idx+1} 익절 기록</button>`;
+      } else if(isForce){
+        sellInfo=`7일! LOC취소 → MOC ${p.sh||'?'}주`;
+        sellColor='var(--red)';
+        sellBtn=`<button class="btn btn-r" onclick="doSell(${p.id},'MOC7일',${curPrice})" style="padding:10px;font-size:13px;margin-top:8px">티어${idx+1} 강제매도</button>`;
+      } else {
+        sellInfo=`LOC 매도 ${p.sh||'?'}주 @ $${p.tp} 유지 (D+${days})`;
+      }
+      
+      h+=`<div class="pi">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <span style="color:var(--accent);font-weight:800;font-size:14px">T${idx+1}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;margin-left:8px">${p.sh||'?'}주 @ $${p.e}</span>
+            <span style="color:var(--dim);font-size:12px;margin-left:4px">${p.u}u</span>
+          </div>
+          <div class="pp" style="color:${pnl>=0?'var(--green)':'var(--red)'};font-size:16px">${pnl>=0?'+':''}${pnl.toFixed(1)}%</div>
+        </div>
+        <div style="margin-top:8px;font-size:13px;font-weight:600;color:${sellColor}">${sellInfo}</div>
+        ${sellBtn}
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+  
+  // LOC 주문표
+  if(rem>0){
+    h+=`<div class="loc-box">
+      <div class="loc-title">📋 오늘 밤 LOC 주문</div>
+      <div class="order buy">
+        <div class="lbl">① 기본 (무조건 체결)</div>
+        <div class="val">LOC 매수 ${s2}주 @ $${loc1}</div>
+        <div class="desc">2유닛 · 전날×1.15 · 상승+하락 모두</div>
+      </div>
+      <div class="order buy">
+        <div class="lbl">② 하락 추가 (하락일만)</div>
+        <div class="val">LOC 매수 ${s3}주 @ $${loc2}</div>
+        <div class="desc">3유닛 · 전날-$0.01 · 하락일만 체결</div>
+      </div>
+      <div style="font-size:12px;color:var(--dim);margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-weight:600">
+        상승 = ①만 = ${s2}주 (2u) · 하락 = ①+② = ${s2+s3}주 (5u)
+      </div>
+    </div>`;
+    
+    // 매수 기록
+    h+=`<div class="card">
+      <div class="ct">매수 체결 기록</div>
+      <div class="ir">
+        <label>체결가</label>
+        <input type="number" step="0.01" id="fill-price" placeholder="종가" oninput="updateFill()">
+        <span class="u">$</span>
+      </div>
+      <div class="ir">
+        <label>유닛</label>
+        <input type="number" id="fill-units" value="2" oninput="updateFill()">
+        <span class="u">u</span>
+      </div>
+      <div class="ir">
+        <label>주수</label>
+        <input type="number" id="fill-shares" value="${s2}" oninput="">
+        <span class="u">주</span>
+      </div>
+      <div id="fill-info" style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--dim);margin:10px 0;padding:12px;background:#0d0d0d;border-radius:10px"></div>
+      <button class="btn btn-b" onclick="doBuy()">티어${pos.length+1} 기록</button>
+    </div>`;
+  } else {
+    h+=`<div class="warn">20유닛 MAX — 매수 불가</div>`;
   }
   
   // 통계
-  const totalPnl = positions.reduce((s,p) => {
-    const pnl = (price - p.entry) / p.entry * p.units / TOTAL_UNITS * 100;
-    return s + pnl;
-  }, 0);
-  
-  html += `<div class="stats-grid animate">
-    <div class="stat-box">
-      <div class="val">${totalInvested}/${TOTAL_UNITS}</div>
-      <div class="lbl">투입 유닛</div>
-    </div>
-    <div class="stat-box">
-      <div class="val" style="color:${totalPnl>=0?'var(--green)':'var(--red)'}">
-        ${totalPnl>=0?'+':''}${totalPnl.toFixed(1)}%
-      </div>
-      <div class="lbl">미실현 손익</div>
-    </div>
-    <div class="stat-box">
-      <div class="val">${positions.length}</div>
-      <div class="lbl">보유 포지션</div>
-    </div>
-    <div class="stat-box">
-      <div class="val">${history.filter(h=>h.action==='SELL'&&h.pnl>=0).length}/${history.filter(h=>h.action==='SELL').length}</div>
-      <div class="lbl">승/총매도</div>
-    </div>
+  const tpnl=pos.reduce((s,p)=>s+((curPrice-p.e)/p.e*p.u/TU*100),0);
+  const ts=hist.filter(x=>x.a==='S');
+  const tw=ts.filter(x=>x.pnl>=0).length;
+  h+=`<div class="sg">
+    <div class="sb"><div class="v">${ti}/${TU}</div><div class="l">투입</div></div>
+    <div class="sb"><div class="v" style="color:${tpnl>=0?'var(--green)':'var(--red)'}">${tpnl>=0?'+':''}${tpnl.toFixed(1)}%</div><div class="l">미실현</div></div>
+    <div class="sb"><div class="v">${pos.length}</div><div class="l">보유</div></div>
+    <div class="sb"><div class="v">${tw}/${ts.length}</div><div class="l">승/매도</div></div>
   </div>`;
   
-  document.getElementById('analysis').innerHTML = html;
-  document.getElementById('analysis').classList.remove('hidden');
-  
-  renderPositions(price);
+  el.innerHTML=h;
 }
 
-function executeBuy(price, units, zone, dd) {
-  const pos = {
-    id: Date.now(),
-    date: today(),
-    entry: price,
-    units: units,
-    target: parseFloat((price * 1.03).toFixed(2)),
-    zone: zone,
-  };
-  positions.push(pos);
-  history.push({
-    id: Date.now(),
-    date: today(),
-    action: 'BUY',
-    price: price,
-    units: units,
-    zone: zone,
-    dd: dd,
-  });
-  save();
-  calc();
-  renderPositions(price);
+function updateFill(){
+  const fp=gv('fill-price'),pv=gv('prev');
+  if(!fp)return;
+  const uw=seed/TU;
+  const isdn=pv>0&&fp<pv;
+  const units=isdn?DN:UP;
+  const ti=pos.reduce((s,p)=>s+p.u,0);
+  const au=Math.min(units,TU-ti);
+  const basePrice=pv>0?pv:fp;
+  const ss=Math.floor(au*uw/basePrice);
+  const tp=(fp*1.03).toFixed(2);
+  
+  document.getElementById('fill-units').value=au;
+  document.getElementById('fill-shares').value=ss;
+  document.getElementById('fill-info').innerHTML=
+    `T${pos.length+1} · ${isdn?'하락':'상승'} · ${ss}주 @ $${fp} (${au}u)<br>매도: LOC ${ss}주 @ $${tp}`;
 }
 
-function executeSell(posId, reason, price) {
-  const idx = positions.findIndex(p => p.id === posId);
-  if (idx === -1) return;
-  const pos = positions[idx];
-  const pnl = ((price - pos.entry) / pos.entry * 100);
-  const unitWon = seed / TOTAL_UNITS;
-  const profitWon = (pnl / 100 * pos.units * unitWon);
-  
-  history.push({
-    id: Date.now(),
-    date: today(),
-    action: 'SELL',
-    price: price,
-    units: pos.units,
-    entry: pos.entry,
-    pnl: parseFloat(pnl.toFixed(2)),
-    profitWon: parseFloat(profitWon.toFixed(0)),
-    reason: reason,
-    days: daysBetween(pos.date, today()),
-  });
-  
-  positions.splice(idx, 1);
-  save();
-  calc();
-  renderPositions(price);
+function doBuy(){
+  const fp=gv('fill-price'),fu=gv('fill-units')||2,fsh=gv('fill-shares')||0;
+  if(!fp){alert('체결가!');return}
+  const ti=pos.reduce((s,p)=>s+p.u,0);
+  if(ti+fu>TU){alert(`잔여 ${TU-ti}u만 가능!`);return}
+  const tp=+(fp*1.03).toFixed(2);
+  pos.push({id:Date.now(),d:td(),e:fp,u:fu,tp:tp,sh:fsh});
+  hist.push({id:Date.now(),d:td(),a:'B',pr:fp,u:fu,sh:fsh});
+  sv();go();
 }
 
-function renderPositions(price) {
-  price = price || parseFloat(document.getElementById('price').value) || 0;
-  const unitWon = seed / TOTAL_UNITS;
-  
-  let html = '<div class="card"><div class="card-title">📦 보유 포지션</div>';
-  
-  if (positions.length === 0) {
-    html += '<div style="text-align:center;padding:20px;color:var(--dim)">포지션 없음</div>';
-  } else {
-    positions.forEach(p => {
-      const pnl = price > 0 ? ((price - p.entry) / p.entry * 100) : 0;
-      const days = daysBetween(p.date, today());
-      const remaining = FORCED_DAYS - days;
-      const profitWon = price > 0 ? (pnl / 100 * p.units * unitWon).toFixed(0) : '?';
-      
-      html += `<div class="pos-item">
-        <div>
-          <div style="font-size:12px;font-weight:600">
-            $${p.entry} × ${p.units}유닛
+function doSell(pid,reason,pr){
+  const i=pos.findIndex(p=>p.id===pid);if(i===-1)return;
+  const p=pos[i];
+  const pnl=+((pr-p.e)/p.e*100).toFixed(2);
+  const uw=seed/TU;
+  const pw=+(pnl/100*p.u*uw).toFixed(0);
+  hist.push({id:Date.now(),d:td(),a:'S',pr:pr,u:p.u,ep:p.e,pnl:pnl,pw:pw,r:reason,days:db(p.d,td()),sh:p.sh||0});
+  pos.splice(i,1);sv();go();
+}
+
+function rPos(){
+  const pv=gv('prev')||0,uw=seed/TU;
+  const curP=pv;
+  let h='<div class="card"><div class="ct">전체 티어</div>';
+  if(!pos.length)h+='<div class="info">보유 없음</div>';
+  else{
+    pos.forEach((p,idx)=>{
+      const pnl=curP>0?((curP-p.e)/p.e*100):0;
+      const days=db(p.d,td()),rem=FD-days;
+      const isForce=days>=FD;
+      const isTP=curP>=p.e*1.03;
+      h+=`<div class="pi">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <span style="color:var(--accent);font-weight:800">T${idx+1}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-weight:700;margin-left:8px">${p.sh||'?'}주 @ $${p.e} (${p.u}u)</span><br>
+            <span style="font-size:11px;color:var(--dim)">${p.d} · D+${days} ${rem>0?'(잔여'+rem+'일)':'⏰'} · 매도 $${p.tp}</span>
           </div>
-          <div style="font-size:10px;color:var(--dim)">
-            ${p.date} | D+${days} (잔여${remaining > 0 ? remaining : 0}일)
-            ${remaining <= 0 ? '⏰' : ''}
-          </div>
-          <div style="font-size:10px;color:var(--dim)">
-            목표 $${p.target} | 수익 ${profitWon}만
-          </div>
-        </div>
-        <div class="pos-pnl" style="color:${pnl>=0?'var(--green)':'var(--red)'}">
-          ${pnl>=0?'+':''}${pnl.toFixed(1)}%
+          <div class="pp" style="color:${pnl>=0?'var(--green)':'var(--red)'}">
+            ${pnl>=0?'+':''}${pnl.toFixed(1)}%</div>
         </div>
       </div>`;
     });
-    
-    const totalInv = positions.reduce((s,p) => s+p.units, 0);
-    html += `<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:12px;font-weight:600">
-      <span>총 ${totalInv}/${TOTAL_UNITS}유닛</span>
-      <span>${(totalInv/TOTAL_UNITS*100).toFixed(0)}% 투입</span>
-    </div>`;
+    const tv=pos.reduce((s,p)=>s+p.u,0);
+    const tsh=pos.reduce((s,p)=>s+(p.sh||0),0);
+    h+=`<div style="padding-top:10px;border-top:1px solid var(--border);font-size:14px;font-weight:700;display:flex;justify-content:space-between;margin-top:10px;font-family:'JetBrains Mono',monospace">
+      <span>${tv}/${TU}u</span><span>${tsh}주</span></div>`;
   }
-  
-  html += '</div>';
-  
-  // 초기화 버튼
-  html += `<button class="btn" style="background:none;border:1px solid var(--border);color:var(--dim);font-size:11px;margin-top:4px" onclick="clearAll()">
-    🗑️ 전체 초기화
-  </button>`;
-  
-  document.getElementById('positions-list').innerHTML = html;
+  h+='</div>';
+  document.getElementById('pos-out').innerHTML=h;
 }
 
-function renderHistory() {
-  let html = '<div class="card"><div class="card-title">📜 매매 기록</div>';
-  
-  if (history.length === 0) {
-    html += '<div style="text-align:center;padding:20px;color:var(--dim)">기록 없음</div>';
-  } else {
-    // 통계
-    const sells = history.filter(h => h.action === 'SELL');
-    const wins = sells.filter(s => s.pnl >= 0);
-    const losses = sells.filter(s => s.pnl < 0);
-    const totalProfit = sells.reduce((s,h) => s + (h.profitWon || 0), 0);
-    
-    if (sells.length > 0) {
-      html += `<div class="stats-grid" style="margin-bottom:12px">
-        <div class="stat-box">
-          <div class="val" style="color:var(--green)">${wins.length}승</div>
-          <div class="lbl">수익 매매</div>
-        </div>
-        <div class="stat-box">
-          <div class="val" style="color:var(--red)">${losses.length}패</div>
-          <div class="lbl">손실 매매</div>
-        </div>
-        <div class="stat-box">
-          <div class="val">${sells.length > 0 ? (wins.length/sells.length*100).toFixed(0) : 0}%</div>
-          <div class="lbl">승률</div>
-        </div>
-        <div class="stat-box">
-          <div class="val" style="color:${totalProfit>=0?'var(--green)':'var(--red)'}">
-            ${totalProfit>=0?'+':''}${totalProfit}만
-          </div>
-          <div class="lbl">총 손익</div>
-        </div>
+function rHist(){
+  let h='<div class="card"><div class="ct">매매 기록</div>';
+  if(!hist.length)h+='<div class="info">기록 없음</div>';
+  else{
+    const sl=hist.filter(x=>x.a==='S'),wn=sl.filter(x=>x.pnl>=0),tp=sl.reduce((s,x)=>s+(x.pw||0),0);
+    if(sl.length){
+      h+=`<div class="sg" style="margin-top:0">
+        <div class="sb"><div class="v" style="color:var(--green)">${wn.length}</div><div class="l">승</div></div>
+        <div class="sb"><div class="v" style="color:var(--red)">${sl.length-wn.length}</div><div class="l">패</div></div>
+        <div class="sb"><div class="v">${sl.length>0?(wn.length/sl.length*100).toFixed(0):0}%</div><div class="l">승률</div></div>
+        <div class="sb"><div class="v" style="color:${tp>=0?'var(--green)':'var(--red)'}">$${tp}</div><div class="l">손익</div></div>
       </div>`;
     }
-    
-    // 기록 목록
-    [...history].reverse().slice(0, 30).forEach(h => {
-      if (h.action === 'BUY') {
-        html += `<div class="trade-item" style="color:var(--accent)">
-          ${h.date} 📥 ${h.units}u @ $${h.price} [${h.zone}]
-        </div>`;
-      } else {
-        const color = h.pnl >= 0 ? 'var(--green)' : 'var(--red)';
-        html += `<div class="trade-item" style="color:${color}">
-          ${h.date} 📤 ${h.units}u $${h.entry}→$${h.price} 
-          ${h.pnl>=0?'+':''}${h.pnl}% (${h.profitWon>=0?'+':''}${h.profitWon}만) [${h.reason}]
-        </div>`;
-      }
+    [...hist].reverse().slice(0,30).forEach(x=>{
+      if(x.a==='B')h+=`<div class="ti" style="color:var(--accent)">${x.d} 📥 ${x.u}u ${x.sh||'?'}주 @$${x.pr}</div>`;
+      else{const c=x.pnl>=0?'var(--green)':'var(--red)';
+        h+=`<div class="ti" style="color:${c}">${x.d} 📤 ${x.u}u $${x.ep}→$${x.pr} ${x.pnl>=0?'+':''}${x.pnl}% $${x.pw} [${x.r}]</div>`;}
     });
   }
-  
-  html += '</div>';
-  document.getElementById('history-list').innerHTML = html;
+  h+='</div>';
+  document.getElementById('hist-out').innerHTML=h;
 }
 
-function clearAll() {
-  if (confirm('모든 포지션과 기록을 초기화할까요?')) {
-    positions = [];
-    history = [];
-    save();
-    calc();
-    renderPositions();
-    renderHistory();
-  }
+function resetAll(){pos=[];hist=[];localStorage.clear();location.reload()}
+
+function sTab(n,btn){
+  ['main','pos','hist','guide'].forEach(t=>document.getElementById('tab-'+t).classList.add('hidden'));
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
+  document.getElementById('tab-'+n).classList.remove('hidden');
+  btn.classList.add('on');
+  if(n==='pos')rPos();if(n==='hist')rHist();
+  if(n==='guide')setTimeout(drawCharts,50);
 }
 
-function showTab(name) {
-  ['main','positions','history','guide'].forEach(t => {
-    document.getElementById('tab-'+t).classList.add('hidden');
-    document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
-  });
-  document.getElementById('tab-'+name).classList.remove('hidden');
-  event.target.classList.add('active');
-  
-  if (name === 'positions') renderPositions();
-  if (name === 'history') renderHistory();
-}
-
-// 초기화
-load();
-calc();
-renderPositions();
+ld();go();
 </script>
-
 </body>
 </html>
