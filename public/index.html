@@ -72,6 +72,7 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
   <button class="tab on" onclick="sTab('main',this)">매매</button>
   <button class="tab" onclick="sTab('pos',this)">티어</button>
   <button class="tab" onclick="sTab('hist',this)">기록</button>
+  <button class="tab" onclick="sTab('bt',this)">백테</button>
   <button class="tab" onclick="sTab('guide',this)">가이드</button>
 </div>
 
@@ -100,6 +101,52 @@ body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-ser
 
 <div id="tab-pos" class="hidden"><div id="pos-out"></div></div>
 <div id="tab-hist" class="hidden"><div id="hist-out"></div></div>
+
+<div id="tab-bt" class="hidden">
+  <div class="card">
+    <div class="ct">진입 시점 선택</div>
+    <div style="padding:6px 0">
+      <input type="range" id="bt-slider" min="0" max="74" value="0" oninput="btUpdate()" style="width:100%;-webkit-appearance:none;background:#1a1a2a;height:8px;border-radius:4px;outline:none">
+      <style>#bt-slider::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;background:var(--accent);border-radius:50%;cursor:pointer;box-shadow:0 0 10px rgba(59,130,246,0.4)}</style>
+      <div style="display:flex;justify-content:space-between;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700">
+        <span id="bt-date" style="color:var(--accent)">2020-01</span>
+        <span id="bt-price" style="color:var(--dim)">$18.07</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="text-align:center;padding:24px">
+    <div id="bt-main-date" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--accent);font-weight:700">2020-01 진입</div>
+    <div id="bt-main-price" style="font-family:'JetBrains Mono',monospace;font-size:14px;color:var(--dim);margin-top:4px">SOXL $18.07</div>
+    <div id="bt-main-mult" style="font-family:'JetBrains Mono',monospace;font-size:64px;font-weight:800;color:#fff;margin:8px 0">113<span style="color:var(--accent)">×</span></div>
+    <div id="bt-main-years" style="font-size:13px;color:var(--dim)">6.3년 → 2026-04-17</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px;background:var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px">
+    <div style="background:var(--card);padding:12px;text-align:center"><div id="bt-cagr" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;color:#22c55e">+113%</div><div style="font-size:9px;color:var(--dim);margin-top:3px;font-weight:700">CAGR</div></div>
+    <div style="background:var(--card);padding:12px;text-align:center"><div id="bt-mdd" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;color:#ef4444">-54%</div><div style="font-size:9px;color:var(--dim);margin-top:3px;font-weight:700">MDD</div></div>
+    <div style="background:var(--card);padding:12px;text-align:center"><div id="bt-ret" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;color:var(--accent)">+11K%</div><div style="font-size:9px;color:var(--dim);margin-top:3px;font-weight:700">수익</div></div>
+    <div style="background:var(--card);padding:12px;text-align:center"><div id="bt-yrs" style="font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;color:var(--dim)">6.3</div><div style="font-size:9px;color:var(--dim);margin-top:3px;font-weight:700">년</div></div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+    <div class="card" style="text-align:center;padding:14px"><div style="font-size:10px;color:var(--dim);font-weight:700">$20,000</div><div id="bt-m20" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:800;color:#22c55e;margin-top:4px">$2.3M</div></div>
+    <div class="card" style="text-align:center;padding:14px"><div style="font-size:10px;color:var(--dim);font-weight:700">$30,000</div><div id="bt-m30" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:800;color:#22c55e;margin-top:4px">$3.4M</div></div>
+    <div class="card" style="text-align:center;padding:14px"><div style="font-size:10px;color:var(--dim);font-weight:700">1억</div><div id="bt-m1a" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:800;color:#22c55e;margin-top:4px">113억</div></div>
+    <div class="card" style="text-align:center;padding:14px"><div style="font-size:10px;color:var(--dim);font-weight:700">MDD 최악</div><div id="bt-mmdd" style="font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:800;color:#ef4444;margin-top:4px">-54%</div></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">배수 타임라인</div>
+    <canvas id="bt-canvas" style="width:100%;height:160px"></canvas>
+  </div>
+
+  <div class="card">
+    <div class="ct">히트맵 · 진입시점별 배수</div>
+    <div id="bt-heatmap"></div>
+  </div>
+</div>
+
 <div id="tab-guide" class="hidden">
   <div class="card" style="font-size:13px;line-height:2;color:var(--dim)">
     <div style="color:var(--accent);font-size:16px;font-weight:700;margin-bottom:12px">SOXL HUNTER v6</div>
@@ -461,12 +508,193 @@ function rHist(){
 function resetAll(){pos=[];hist=[];localStorage.clear();location.reload()}
 
 function sTab(n,btn){
-  ['main','pos','hist','guide'].forEach(t=>document.getElementById('tab-'+t).classList.add('hidden'));
+  ['main','pos','hist','bt','guide'].forEach(t=>document.getElementById('tab-'+t).classList.add('hidden'));
   document.querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
   document.getElementById('tab-'+n).classList.remove('hidden');
   btn.classList.add('on');
   if(n==='pos')rPos();if(n==='hist')rHist();
   if(n==='guide')setTimeout(drawCharts,50);
+  if(n==='bt'){btInit();btUpdate();}
+}
+
+// 백테스트 데이터
+const BT=[
+{d:"2020-01",p:18.07,y:6.3,r:11210,m:113.1,c:112.6,mdd:-53.7},
+{d:"2020-02",p:16.55,y:6.2,r:10403,m:105.0,c:112.1,mdd:-53.7},
+{d:"2020-03",p:14.74,y:6.1,r:12181,m:122.8,c:119.6,mdd:-52.1},
+{d:"2020-04",p:5.20,y:6.0,r:15547,m:156.5,c:131.2,mdd:-52.1},
+{d:"2020-05",p:7.28,y:5.9,r:11139,m:112.4,c:121.3,mdd:-52.1},
+{d:"2020-06",p:9.97,y:5.9,r:8725,m:88.3,c:114.7,mdd:-52.1},
+{d:"2020-07",p:11.82,y:5.8,r:8158,m:82.6,c:114.7,mdd:-52.1},
+{d:"2020-08",p:15.73,y:5.7,r:6560,m:66.6,c:109.1,mdd:-52.1},
+{d:"2020-09",p:18.49,y:5.6,r:5662,m:57.6,c:106.1,mdd:-52.1},
+{d:"2020-10",p:17.62,y:5.5,r:5193,m:52.9,c:105.1,mdd:-52.1},
+{d:"2020-11",p:16.58,y:5.4,r:5289,m:53.9,c:108.2,mdd:-52.1},
+{d:"2020-12",p:28.02,y:5.4,r:4394,m:44.9,c:103.5,mdd:-52.1},
+{d:"2021-01",p:30.15,y:5.3,r:4042,m:41.4,c:102.7,mdd:-52.1},
+{d:"2021-02",p:36.72,y:5.2,r:3559,m:36.6,c:100.0,mdd:-52.1},
+{d:"2021-03",p:41.84,y:5.1,r:3046,m:31.5,c:96.1,mdd:-52.1},
+{d:"2021-04",p:41.72,y:5.0,r:2417,m:25.2,c:90.0,mdd:-52.1},
+{d:"2021-05",p:35.03,y:4.9,r:2892,m:29.9,c:98.8,mdd:-52.1},
+{d:"2021-06",p:37.72,y:4.9,r:2565,m:26.6,c:96.4,mdd:-52.1},
+{d:"2021-07",p:41.88,y:4.8,r:2288,m:23.9,c:94.3,mdd:-52.1},
+{d:"2021-08",p:44.48,y:4.7,r:2114,m:22.1,c:93.4,mdd:-52.1},
+{d:"2021-09",p:45.21,y:4.6,r:2193,m:22.9,c:97.4,mdd:-52.1},
+{d:"2021-10",p:39.42,y:4.5,r:2420,m:25.2,c:104.1,mdd:-52.1},
+{d:"2021-11",p:49.15,y:4.4,r:2035,m:21.4,c:99.2,mdd:-52.1},
+{d:"2021-12",p:62.13,y:4.4,r:1778,m:18.8,c:96.0,mdd:-52.1},
+{d:"2022-01",p:70.94,y:4.3,r:1500,m:16.0,c:91.4,mdd:-50.6},
+{d:"2022-02",p:45.17,y:4.2,r:1896,m:20.0,c:104.3,mdd:-50.6},
+{d:"2022-03",p:35.99,y:4.1,r:1956,m:20.6,c:108.5,mdd:-50.6},
+{d:"2022-04",p:35.72,y:4.0,r:1964,m:20.6,c:112.2,mdd:-50.6},
+{d:"2022-05",p:24.11,y:3.9,r:2127,m:22.3,c:119.6,mdd:-50.6},
+{d:"2022-06",p:23.33,y:3.9,r:1685,m:17.8,c:110.9,mdd:-50.6},
+{d:"2022-07",p:11.43,y:3.8,r:2428,m:25.3,c:135.1,mdd:-50.6},
+{d:"2022-08",p:19.72,y:3.7,r:1871,m:19.7,c:123.9,mdd:-50.6},
+{d:"2022-09",p:13.03,y:3.6,r:2131,m:22.3,c:136.5,mdd:-50.6},
+{d:"2022-10",p:9.59,y:3.5,r:2412,m:25.1,c:149.6,mdd:-50.6},
+{d:"2022-11",p:9.00,y:3.4,r:2573,m:26.7,c:159.9,mdd:-50.6},
+{d:"2022-12",p:13.35,y:3.4,r:1818,m:19.2,c:141.1,mdd:-50.6},
+{d:"2023-01",p:9.29,y:3.3,r:2012,m:21.1,c:153.9,mdd:-50.6},
+{d:"2023-02",p:16.67,y:3.2,r:1493,m:15.9,c:137.9,mdd:-50.6},
+{d:"2023-03",p:14.57,y:3.1,r:1442,m:15.4,c:140.4,mdd:-50.6},
+{d:"2023-04",p:17.70,y:3.0,r:1142,m:12.4,c:129.8,mdd:-50.6},
+{d:"2023-05",p:14.57,y:3.0,r:1313,m:14.1,c:145.2,mdd:-50.6},
+{d:"2023-06",p:22.02,y:2.9,r:985,m:10.9,c:129.9,mdd:-50.6},
+{d:"2023-07",p:25.37,y:2.8,r:904,m:10.0,c:129.1,mdd:-50.6},
+{d:"2023-08",p:28.40,y:2.7,r:795,m:8.9,c:125.0,mdd:-50.6},
+{d:"2023-09",p:23.91,y:2.6,r:834,m:9.3,c:135.3,mdd:-50.6},
+{d:"2023-10",p:19.02,y:2.5,r:990,m:10.9,c:156.9,mdd:-50.6},
+{d:"2023-11",p:15.90,y:2.4,r:1086,m:11.9,c:175.0,mdd:-50.6},
+{d:"2023-12",p:23.00,y:2.4,r:926,m:10.3,c:168.1,mdd:-50.6},
+{d:"2024-01",p:28.02,y:2.3,r:894,m:9.9,c:173.7,mdd:-50.6},
+{d:"2024-02",p:32.42,y:2.2,r:726,m:8.3,c:161.3,mdd:-50.6},
+{d:"2024-03",p:48.29,y:2.1,r:586,m:6.9,c:148.2,mdd:-50.6},
+{d:"2024-04",p:47.99,y:2.0,r:539,m:6.4,c:148.2,mdd:-50.6},
+{d:"2024-05",p:34.37,y:2.0,r:575,m:6.8,c:166.0,mdd:-50.6},
+{d:"2024-06",p:48.59,y:1.9,r:459,m:5.6,c:151.5,mdd:-50.6},
+{d:"2024-07",p:55.36,y:1.8,r:402,m:5.0,c:146.2,mdd:-50.6},
+{d:"2024-08",p:35.00,y:1.7,r:515,m:6.2,c:190.7,mdd:-50.6},
+{d:"2024-09",p:30.07,y:1.6,r:426,m:5.3,c:179.4,mdd:-50.6},
+{d:"2024-10",p:33.83,y:1.5,r:324,m:4.2,c:156.1,mdd:-50.6},
+{d:"2024-11",p:30.83,y:1.4,r:273,m:3.7,c:148.8,mdd:-50.6},
+{d:"2024-12",p:30.20,y:1.4,r:290,m:3.9,c:170.9,mdd:-50.6},
+{d:"2025-01",p:27.67,y:1.3,r:230,m:3.3,c:153.5,mdd:-50.6},
+{d:"2025-02",p:25.61,y:1.2,r:235,m:3.4,c:173.4,mdd:-48.8},
+{d:"2025-03",p:20.51,y:1.1,r:283,m:3.8,c:229.4,mdd:-46.2},
+{d:"2025-04",p:15.95,y:1.0,r:418,m:5.2,c:383.9,mdd:-21.2},
+{d:"2025-05",p:12.10,y:1.0,r:279,m:3.8,c:300.3,mdd:-21.2},
+{d:"2025-06",p:16.90,y:0.9,r:253,m:3.5,c:321.4,mdd:-21.2},
+{d:"2025-07",p:24.71,y:0.8,r:189,m:2.9,c:278.4,mdd:-21.2},
+{d:"2025-08",p:24.08,y:0.7,r:179,m:2.8,c:324.3,mdd:-21.2},
+{d:"2025-09",p:25.25,y:0.6,r:150,m:2.5,c:329.8,mdd:-21.2},
+{d:"2025-10",p:36.86,y:0.5,r:104,m:2.0,c:271.0,mdd:-21.2},
+{d:"2025-11",p:48.58,y:0.5,r:75,m:1.8,c:245.9,mdd:-21.2},
+{d:"2025-12",p:41.31,y:0.4,r:71,m:1.7,c:311.9,mdd:-21.2},
+{d:"2026-01",p:47.24,y:0.3,r:52,m:1.5,c:324.0,mdd:-21.2},
+{d:"2026-02",p:65.20,y:0.2,r:30,m:1.3,c:246.3,mdd:-21.2},
+{d:"2026-03",p:62.76,y:0.1,r:27,m:1.3,c:473.9,mdd:-10.0},
+];
+
+function btInit(){
+  document.getElementById('bt-slider').max=BT.length-1;
+  btDrawHeatmap();
+}
+
+function btFmt(v){
+  if(v>=1000000)return '$'+(v/1000000).toFixed(1)+'M';
+  if(v>=1000)return '$'+(v/1000).toFixed(0)+'K';
+  return '$'+v.toFixed(0);
+}
+
+function btUpdate(){
+  const i=parseInt(document.getElementById('bt-slider').value);
+  const e=BT[i];
+  document.getElementById('bt-date').textContent=e.d;
+  document.getElementById('bt-price').textContent='$'+e.p;
+  document.getElementById('bt-main-date').textContent=e.d+' 진입';
+  document.getElementById('bt-main-price').textContent='SOXL $'+e.p;
+  document.getElementById('bt-main-mult').innerHTML=e.m.toFixed(0)+'<span style="color:var(--accent)">×</span>';
+  document.getElementById('bt-main-years').textContent=e.y+'년 → 2026-04-17';
+  document.getElementById('bt-cagr').textContent='+'+e.c.toFixed(0)+'%';
+  document.getElementById('bt-mdd').textContent=e.mdd+'%';
+  document.getElementById('bt-ret').textContent='+'+e.r+'%';
+  document.getElementById('bt-yrs').textContent=e.y;
+  document.getElementById('bt-m20').textContent=btFmt(e.m*20000);
+  document.getElementById('bt-m30').textContent=btFmt(e.m*30000);
+  document.getElementById('bt-m1a').textContent=(e.m*10000/10000).toFixed(0)+'억';
+  document.getElementById('bt-mmdd').textContent=e.mdd+'%';
+  btDrawTimeline(i);
+}
+
+function btDrawTimeline(hl){
+  const cv=document.getElementById('bt-canvas');
+  const dpr=window.devicePixelRatio||2;
+  const W=cv.parentElement.offsetWidth-40;
+  cv.width=W*dpr;cv.height=160*dpr;cv.style.width=W+'px';cv.style.height='160px';
+  const ctx=cv.getContext('2d');ctx.scale(dpr,dpr);
+  const H=160,pL=36,pR=6,pT=12,pB=22;
+  const cW=W-pL-pR,cH=H-pT-pB;
+  const maxM=Math.max(...BT.map(x=>x.m));
+  
+  ctx.strokeStyle='#1a1a2a';ctx.lineWidth=0.5;
+  for(let i=0;i<=3;i++){
+    const y=pT+i*cH/3;
+    ctx.beginPath();ctx.moveTo(pL,y);ctx.lineTo(W-pR,y);ctx.stroke();
+    ctx.fillStyle='#333';ctx.font='8px JetBrains Mono';ctx.textAlign='right';
+    ctx.fillText((maxM*(1-i/3)).toFixed(0)+'×',pL-3,y+3);
+  }
+  
+  const grad=ctx.createLinearGradient(0,pT,0,H-pB);
+  grad.addColorStop(0,'rgba(59,130,246,0.15)');grad.addColorStop(1,'rgba(59,130,246,0)');
+  ctx.beginPath();ctx.moveTo(pL,H-pB);
+  BT.forEach((e,i)=>{ctx.lineTo(pL+i*cW/(BT.length-1),pT+(1-e.m/maxM)*cH)});
+  ctx.lineTo(pL+(BT.length-1)*cW/(BT.length-1),H-pB);ctx.closePath();
+  ctx.fillStyle=grad;ctx.fill();
+  
+  ctx.beginPath();
+  BT.forEach((e,i)=>{const x=pL+i*cW/(BT.length-1),y=pT+(1-e.m/maxM)*cH;i===0?ctx.moveTo(x,y):ctx.lineTo(x,y)});
+  ctx.strokeStyle='#3b82f644';ctx.lineWidth=2;ctx.stroke();
+  
+  const hx=pL+hl*cW/(BT.length-1),hy=pT+(1-BT[hl].m/maxM)*cH;
+  ctx.beginPath();ctx.arc(hx,hy,5,0,Math.PI*2);ctx.fillStyle='var(--accent)';ctx.fill();
+  ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='#fff';ctx.font='bold 10px JetBrains Mono';ctx.textAlign='center';
+  ctx.fillText(BT[hl].m.toFixed(0)+'×',hx,hy-10);
+  
+  ctx.fillStyle='#333';ctx.font='8px JetBrains Mono';ctx.textAlign='center';
+  [0,12,24,36,48,60,72].forEach(i=>{if(i<BT.length){ctx.fillText(BT[i].d.slice(2),pL+i*cW/(BT.length-1),H-pB+12)}});
+}
+
+function btDrawHeatmap(){
+  const el=document.getElementById('bt-heatmap');
+  const yrs=[2020,2021,2022,2023,2024,2025,2026];
+  const mos=['J','F','M','A','M','J','J','A','S','O','N','D'];
+  let h='<div style="display:grid;grid-template-columns:24px repeat(12,1fr);gap:2px;margin-bottom:3px">';
+  h+='<div></div>';mos.forEach(m=>h+=`<div style="font-family:JetBrains Mono;font-size:8px;color:#444;text-align:center">${m}</div>`);
+  h+='</div>';
+  yrs.forEach(y=>{
+    h+=`<div style="display:grid;grid-template-columns:24px repeat(12,1fr);gap:2px;margin-bottom:2px">`;
+    h+=`<div style="font-family:JetBrains Mono;font-size:9px;color:#444;display:flex;align-items:center;font-weight:700">${String(y).slice(2)}</div>`;
+    for(let m=1;m<=12;m++){
+      const key=`${y}-${String(m).padStart(2,'0')}`;
+      const idx=BT.findIndex(e=>e.d===key);
+      if(idx>=0){
+        const e=BT[idx];
+        let bg;
+        if(e.m>=100)bg='#1d4ed8';else if(e.m>=50)bg='#2563eb';else if(e.m>=20)bg='#3b82f6';
+        else if(e.m>=10)bg='#60a5fa';else if(e.m>=5)bg='#93c5fd';else if(e.m>=2)bg='#bfdbfe';else bg='#dbeafe';
+        h+=`<div style="aspect-ratio:1;border-radius:3px;background:${bg};display:flex;align-items:center;justify-content:center;font-family:JetBrains Mono;font-size:7px;font-weight:700;color:${e.m>=20?'#fff':'#1e3a5f'};cursor:pointer" onclick="document.getElementById('bt-slider').value=${idx};btUpdate()">${e.m.toFixed(0)}</div>`;
+      } else {
+        h+=`<div style="aspect-ratio:1;border-radius:3px;background:#0d0d12"></div>`;
+      }
+    }
+    h+='</div>';
+  });
+  h+=`<div style="display:flex;gap:6px;justify-content:center;margin-top:10px;font-size:9px;font-weight:600;color:#666">
+    <span>1-2×</span><span style="color:#93c5fd">5-10×</span><span style="color:#3b82f6">20-50×</span><span style="color:#2563eb">50-100×</span><span style="color:#1d4ed8">100×+</span>
+  </div>`;
+  el.innerHTML=h;
 }
 
 ld();go();
