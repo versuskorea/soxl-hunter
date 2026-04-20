@@ -94,7 +94,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
   <div class="card">
     <div class="ct">설정</div>
     <div class="ir"><label>시드</label><input type="number" id="seed" value="20000" oninput="sv();go()"><span class="u">$</span></div>
-    <div class="ir"><label>전날종가</label><input type="number" step="0.01" id="prev" placeholder="90.00" oninput="go()"><span class="u">$</span></div>
+    <div class="ir"><label>전날종가</label><input type="number" step="0.01" id="prev" placeholder="90.00" oninput="go()"><span class="u">$</span><button onclick="fetchPrice()" style="padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:var(--accent);color:#fff;font-size:11px;font-weight:700;cursor:pointer;margin-left:4px;white-space:nowrap">자동</button></div>
     <div id="unit-info" style="font-size:11px;color:var(--dim);text-align:right;font-weight:600;font-family:'JetBrains Mono',monospace"></div>
   </div>
   <div id="out"></div>
@@ -134,6 +134,22 @@ let pos=[],hist=[],seed=20000;
 function gv(id){return parseFloat(document.getElementById(id).value)||0}
 function td(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function db(a,b){return Math.floor((new Date(b)-new Date(a))/864e5)}
+
+async function fetchPrice(){
+  const btn=event.target;btn.textContent='...';btn.disabled=true;
+  try{
+    const r=await fetch('https://financialmodelingprep.com/api/v3/quote/SOXL?apikey=n0Y8mdidqFuPvn8WKSCXGb2sIECe8LuF');
+    const d=await r.json();
+    if(d&&d[0]&&d[0].previousClose){
+      document.getElementById('prev').value=d[0].previousClose;
+      go();
+      btn.textContent='✓';btn.style.background='var(--green)';
+    }else{
+      btn.textContent='✗';btn.style.background='var(--red)';
+    }
+  }catch(e){btn.textContent='✗';btn.style.background='var(--red)';}
+  setTimeout(()=>{btn.textContent='자동';btn.style.background='var(--accent)';btn.disabled=false;},2000);
+}
 
 function sv(){
   seed=gv('seed')||20000;
@@ -409,6 +425,8 @@ function sTab(n,btn){
 // 초기화
 const lastStrat=parseInt(localStorage.getItem('h7-last'))||1;
 switchStrat(lastStrat);
+// 자동 종가 로드
+fetchPrice();
 </script>
 </body>
 </html>
