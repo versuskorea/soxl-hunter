@@ -138,10 +138,12 @@ function db(a,b){return Math.floor((new Date(b)-new Date(a))/864e5)}
 async function fetchPrice(){
   const btn=event.target;btn.textContent='...';btn.disabled=true;
   try{
-    const r=await fetch('https://financialmodelingprep.com/api/v3/quote/SOXL?apikey=n0Y8mdidqFuPvn8WKSCXGb2sIECe8LuF');
+    const r=await fetch('https://query1.finance.yahoo.com/v8/finance/chart/SOXL?range=2d&interval=1d');
     const d=await r.json();
-    if(d&&d[0]&&d[0].previousClose){
-      document.getElementById('prev').value=d[0].previousClose;
+    const meta=d.chart.result[0].meta;
+    const pc=meta.chartPreviousClose||meta.regularMarketPrice;
+    if(pc){
+      document.getElementById('prev').value=pc;
       go();
       btn.textContent='✓';btn.style.background='var(--green)';
     }else{
