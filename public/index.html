@@ -51,6 +51,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .btn-d{background:var(--card2);color:var(--dim);border:1px solid var(--border)}
 .btn-r{background:#1a0a0a;color:var(--red);border:1px solid var(--red)}
 .btn-fetch{background:#1a1a2a;color:var(--accent);border:1px solid var(--accent);font-size:12px;padding:10px}
+.btn-bt{background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;text-decoration:none;display:block;text-align:center}
 
 .loc-box{background:var(--card2);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid var(--border)}
 .loc-title{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px}
@@ -87,7 +88,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 <body>
 <div class="hdr">
   <h1>SOXL <span>HUNTER</span> v8</h1>
-  <div class="stats">3구간 자동전환 · CAGR +102% · MDD -51% · 137배 · 손실 0년!</div>
+  <div class="stats">3구간 자동전환 · CAGR +102% · MDD -51% · 137배</div>
 </div>
 
 <div class="zone-bar" id="zone-bar">
@@ -114,32 +115,32 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </div>
 
 <div class="tabs">
-  <button class="tab" onclick="sw('m')">매매</button>
-  <button class="tab on" onclick="sw('t')">티어</button>
-  <button class="tab" onclick="sw('h')">기록</button>
-  <button class="tab" onclick="sw('g')">가이드</button>
+  <button class="tab" id="tab-m" onclick="sw('m')">매매</button>
+  <button class="tab on" id="tab-t" onclick="sw('t')">티어</button>
+  <button class="tab" id="tab-h" onclick="sw('h')">기록</button>
+  <button class="tab" id="tab-g" onclick="sw('g')">가이드</button>
 </div>
 
 <div id="body"></div>
+
+<a href="bt.html" class="btn btn-bt">📊 백테스트 페이지로!</a>
 
 <div class="footer">SOXL HUNTER v8 · 3구간 자동전환</div>
 
 <script>
 // 설정 (HUNTER v8 안전 3구간)
-const TU = 20;  // 총 유닛
-const UP = 2;   // 상승일 매수
-const DN = 4;   // 하락일 매수
+const TU = 20;
+const UP = 2;
+const DN = 4;
 
-// 구간별 매도 TP + 강제매도일
 const ZONES = {
   top: {tp: 0.025, fd: 7, label:'천장', color:'top'},
   mid: {tp: 0.005, fd: 7, label:'중간', color:'mid'},
   bot: {tp: 0.030, fd: 10, label:'바닥', color:'bot'}
 };
 
-// 구간 판정 임계값 (20일 전고점 기준)
-const TOP_TH = -10;  // -10% 이내 = 천장
-const BOT_TH = -15;  // -15% 이상 하락 = 바닥
+const TOP_TH = -10;
+const BOT_TH = -15;
 
 // 상태
 let tab = 't';
@@ -166,7 +167,6 @@ const db = (a,b) => {
   return days;
 };
 
-// 현재 구간 판정
 function getZone() {
   if (!curPrice || !high20) return 'top';
   const dd = (curPrice - high20) / high20 * 100;
@@ -218,7 +218,36 @@ function renderStatus() {
   $('status-body').innerHTML = h;
 }
 
+// 핵심 수정: render 시 input 포커스 유지!
+let activeInputId = null;
+let activeInputCursor = 0;
+
+function saveActiveInput() {
+  const ae = document.activeElement;
+  if (ae && ae.tagName === 'INPUT') {
+    activeInputId = ae.id;
+    activeInputCursor = ae.selectionStart;
+  } else {
+    activeInputId = null;
+  }
+}
+
+function restoreActiveInput() {
+  if (activeInputId) {
+    const el = document.getElementById(activeInputId);
+    if (el) {
+      el.focus();
+      try {
+        if (el.type !== 'number') {
+          el.setSelectionRange(activeInputCursor, activeInputCursor);
+        }
+      } catch(e) {}
+    }
+  }
+}
+
 function render() {
+  saveActiveInput();
   renderZones();
   renderStatus();
   
@@ -226,28 +255,25 @@ function render() {
   let h = '';
   
   if (tab === 'm') {
-    // 매매 탭
     const z = zoneDesc();
     const zcfg = ZONES[z.zone];
     const ti = pos.reduce((a,p) => a+p.u, 0);
     const rem = TU - ti;
     const uw = seed/TU;
     
-    // 시드 입력
     h += `<div class="card">
       <div class="ct">설정</div>
-      <div class="ir"><label>시드</label><input type="number" id="seed-in" value="${seed}" oninput="updSeed()"><span class="u">$</span></div>
-      <div class="ir"><label>현재가 (종가)</label><input type="number" step="0.01" id="cp" value="${curPrice||''}" oninput="updPrice()"><span class="u">$</span></div>
-      <div class="ir"><label>20일 전고</label><input type="number" step="0.01" id="h20" value="${high20||''}" oninput="updHigh()"><span class="u">$</span></div>
+      <div class="ir"><label>시드</label><input type="number" id="seed-in" value="${seed}" onchange="updSeed()"><span class="u">$</span></div>
+      <div class="ir"><label>현재가</label><input type="number" step="0.01" id="cp" value="${curPrice||''}" onchange="updPrice()"><span class="u">$</span></div>
+      <div class="ir"><label>20일 전고</label><input type="number" step="0.01" id="h20" value="${high20||''}" onchange="updHigh()"><span class="u">$</span></div>
       <button class="btn btn-fetch" onclick="fetchAuto()">🔄 야후에서 자동 가져오기</button>
     </div>`;
     
     if (rem > 0) {
-      // LOC 매수 주문
       const loc1 = (curPrice * 1.15).toFixed(2);
       const loc2 = (curPrice - 0.01).toFixed(2);
-      const sUp = Math.floor(UP * uw / curPrice);
-      const sDn = Math.floor(DN * uw / curPrice);
+      const sUp = curPrice ? Math.floor(UP * uw / curPrice) : 0;
+      const sDn = curPrice ? Math.floor(DN * uw / curPrice) : 0;
       const sDnX = sDn - sUp;
       
       h += `<div class="loc-box">
@@ -267,10 +293,9 @@ function render() {
       h += `<div class="warn">⚠️ ${TU}u MAX — 매수 불가</div>`;
     }
     
-    // 매도 LOC (보유 티어별)
     if (pos.length > 0) {
       h += `<div class="loc-box">
-        <div class="loc-title">💰 매도 LOC (구간별 자동)</div>`;
+        <div class="loc-title">💰 매도 LOC (구간별)</div>`;
       
       pos.forEach((p, idx) => {
         const pz = ZONES[p.z];
@@ -284,7 +309,7 @@ function render() {
           h += `<div class="order" style="border-left:3px solid var(--red);background:rgba(239,68,68,0.08)">
             <div class="lbl" style="color:var(--red)">⚠️ T${idx+1} 강제매도! (${pz.fd}일 초과)</div>
             <div class="val">MOC 매도 ${p.s}주</div>
-            <div class="desc">매수 $${p.e} · ${days}일 경과 · ${pz.label} 구간</div>
+            <div class="desc">매수 $${p.e} · ${days}일 경과 · ${pz.label}</div>
           </div>`;
         } else {
           h += `<div class="order ${cls}">
@@ -297,12 +322,11 @@ function render() {
       h += `</div>`;
     }
     
-    // 체결 기록
     if (rem > 0) {
       h += `<div class="card">
         <div class="ct">체결 기록 (매수)</div>
-        <div class="ir"><label>체결가</label><input type="number" step="0.01" id="fp" placeholder="$" oninput="upFill()"><span class="u">$</span></div>
-        <div class="ir"><label>유닛</label><input type="number" id="fu" value="${UP}" oninput="upFill()"><span class="u">u</span></div>
+        <div class="ir"><label>체결가</label><input type="number" step="0.01" id="fp" placeholder="$" onchange="upFill()"><span class="u">$</span></div>
+        <div class="ir"><label>유닛</label><input type="number" id="fu" value="${UP}" onchange="upFill()"><span class="u">u</span></div>
         <div class="ir"><label>주수</label><input type="number" id="fs" placeholder="자동계산"><span class="u">주</span></div>
         <div id="fi" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);margin:8px 0;padding:10px;background:#0a0a0f;border-radius:8px"></div>
         <button class="btn btn-b" onclick="doBuy()">T${pos.length+1} 기록</button>
@@ -311,7 +335,6 @@ function render() {
   }
   
   if (tab === 't') {
-    // 티어 탭
     if (pos.length === 0) {
       h += `<div class="card" style="text-align:center;color:var(--dim);padding:40px 20px">
         보유 티어가 없습니다<br><small>매매 탭에서 체결을 기록하세요</small>
@@ -335,7 +358,7 @@ function render() {
             </div>
             <div class="pnl ${cls}">${pnl>=0?'+':''}${pnl}%</div>
           </div>
-          <div class="meta">${p.d} · D+${days} · 잔여${rm}일 · ${pz.label}구간 · 매도$${sellPrice}</div>
+          <div class="meta">${p.d} · D+${days} · 잔여${rm}일 · ${pz.label} · 매도$${sellPrice}</div>
         </div>`;
       });
       
@@ -346,7 +369,6 @@ function render() {
       </div></div>`;
     }
     
-    // 통계
     const tpnl = pos.reduce((a,p) => a+((curPrice-p.e)/p.e*p.u/TU*100), 0);
     const ts = hist.filter(x => x.a === 'S');
     const tw = ts.filter(x => x.pnl >= 0).length;
@@ -360,7 +382,6 @@ function render() {
   }
   
   if (tab === 'h') {
-    // 기록 탭
     if (hist.length === 0) {
       h += `<div class="card" style="text-align:center;color:var(--dim);padding:40px 20px">
         매매 기록이 없습니다
@@ -382,14 +403,13 @@ function render() {
   }
   
   if (tab === 'g') {
-    // 가이드 탭
     h += `<div class="card">
       <div class="ct">SOXL HUNTER v8 가이드</div>
       <div style="font-size:13px;line-height:1.8">
         <p><b style="color:var(--accent)">📋 3구간 자동 전환</b><br>
         20일 전고점 대비 현재가 낙폭으로 구간 판정:</p>
         <ul style="list-style:none;margin:10px 0;padding-left:10px">
-          <li style="color:var(--top)"><b>🟣 천장</b>: -10% 이내 (신고가 근처)<br>
+          <li style="color:var(--top)"><b>🟣 천장</b>: -10% 이내<br>
             <small style="color:var(--dim)">매도 +2.5% / 7일 강제</small></li>
           <li style="color:var(--mid);margin-top:8px"><b>🔵 중간</b>: -10~-15%<br>
             <small style="color:var(--dim)">매도 +0.5% / 7일 강제 (빨리 탈출!)</small></li>
@@ -397,17 +417,14 @@ function render() {
             <small style="color:var(--dim)">매도 +3% / 10일 강제 (크게 먹기!)</small></li>
         </ul>
         
-        <p style="margin-top:16px"><b style="color:var(--accent)">📈 매수 규칙 (TU20)</b><br>
-        상승일 2유닛, 하락일 4유닛</p>
+        <p style="margin-top:16px"><b style="color:var(--accent)">📈 매수 (TU20)</b><br>
+        상승일 2u, 하락일 4u</p>
         <ul style="list-style:none;margin:10px 0;padding-left:10px;font-size:12px">
-          <li>① 전날종가×1.15 LOC → 2주 (무조건)</li>
+          <li>① 전날종가×1.15 LOC → 2주</li>
           <li>② 전날종가-$0.01 LOC → 2주 (하락만)</li>
         </ul>
         
-        <p style="margin-top:16px"><b style="color:var(--accent)">💡 구간별 매도</b><br>
-        티어마다 <b>매수 시점의 구간</b>에 따라 다른 매도가!</p>
-        
-        <p style="margin-top:16px"><b style="color:var(--green)">🏆 백테 (2020~2026, 7년)</b></p>
+        <p style="margin-top:16px"><b style="color:var(--green)">🏆 백테 (2020~2026)</b></p>
         <ul style="list-style:none;font-size:12px;color:var(--dim)">
           <li>✅ CAGR +102%</li>
           <li>✅ MDD -51%</li>
@@ -418,19 +435,37 @@ function render() {
         </ul>
         
         <p style="margin-top:16px;color:var(--red)"><b>⚠️ 주의</b><br>
-        • 바닥 구간 매수는 손실 클 수 있음<br>
-        • 10일 강제매도 시 -30~60% 가능<br>
+        • 바닥 매수는 손실 클 수 있음<br>
+        • 강제매도 시 -30~60% 가능<br>
         • 장기로 보고 견뎌야 함!</p>
       </div>
     </div>`;
   }
   
   body.innerHTML = h;
+  
+  // 입력 포커스 복원!
+  setTimeout(() => restoreActiveInput(), 0);
 }
 
-function updSeed() { seed = gv('seed-in'); save(); render(); }
-function updPrice() { curPrice = gv('cp'); save(); render(); }
-function updHigh() { high20 = gv('h20'); save(); render(); }
+function updSeed() { 
+  const v = gv('seed-in');
+  if (v > 0) seed = v; 
+  save(); 
+  render(); 
+}
+function updPrice() { 
+  const v = gv('cp');
+  curPrice = v; 
+  save(); 
+  render(); 
+}
+function updHigh() { 
+  const v = gv('h20');
+  high20 = v; 
+  save(); 
+  render(); 
+}
 
 function upFill() {
   const fp = gv('fp'), fu = gv('fu');
@@ -442,7 +477,7 @@ function upFill() {
   const pz = ZONES[z.zone];
   const sell = (fp * (1+pz.tp)).toFixed(2);
   $('fi').innerHTML = `유닛당 $${uw.toFixed(0)} · ${fu}u = $${(fu*uw).toFixed(0)} · ${shares}주<br>
-    구간: <b style="color:var(--${z.zone})">${pz.label}</b> · 매도 목표 <b>$${sell}</b> (+${(pz.tp*100).toFixed(1)}%) · 강제 ${pz.fd}일`;
+    구간: <b style="color:var(--${z.zone})">${pz.label}</b> · 매도 <b>$${sell}</b> (+${(pz.tp*100).toFixed(1)}%) · 강제 ${pz.fd}일`;
 }
 
 function doBuy() {
@@ -469,21 +504,18 @@ async function fetchAuto() {
     const data = await res.json();
     if (data.price) {
       curPrice = data.price;
-      $('cp').value = data.price;
     }
     if (data.high20) {
       high20 = data.high20;
-      $('h20').value = data.high20;
     }
     save();
     render();
-    alert(`자동 업데이트!\n현재가: $${curPrice}\n20일 전고: $${high20}`);
+    alert(`자동 업데이트!\n현재가: $${curPrice}\n20일 전고: $${high20}\n구간: ${ZONES[getZone()].label}`);
   } catch(e) {
     alert('자동 가져오기 실패.\n수동으로 입력해주세요.');
   }
 }
 
-// 초기 렌더
 render();
 </script>
 </body>
