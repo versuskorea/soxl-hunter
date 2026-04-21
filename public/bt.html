@@ -11,7 +11,7 @@
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding:12px;max-width:500px;margin:0 auto}
 
-.hdr{text-align:center;padding:20px 0 14px}
+.hdr{text-align:center;padding:20px 0 14px;position:relative}
 .hdr h1{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:4px;color:#fff}
 .hdr h1 span{color:var(--accent)}
 .hdr .stats{font-family:'JetBrains Mono',monospace;font-size:10px;margin-top:6px;color:var(--green);letter-spacing:1px;font-weight:700}
@@ -73,6 +73,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </head>
 <body>
 <div class="hdr">
+  <a href="/" style="position:absolute;left:12px;top:24px;background:var(--card);border:1px solid var(--border);color:var(--accent);padding:8px 14px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;text-decoration:none;letter-spacing:1px">← 매매</a>
   <h1>SOXL <span>HUNTER</span> v8</h1>
   <div class="stats">📊 날짜별 백테스트 | 3구간 자동전환</div>
 </div>
@@ -109,6 +110,8 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 </div>
 
 <div id="result"></div>
+
+<a href="/" style="display:block;text-align:center;background:var(--accent);color:#fff;padding:14px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none;margin-top:14px">← 매매 페이지로 돌아가기</a>
 
 <div class="footer">SOXL HUNTER v8 · 1581일 데이터</div>
 
