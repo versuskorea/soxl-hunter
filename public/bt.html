@@ -19,12 +19,31 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:12px}
 .ct{font-family:'JetBrains Mono',monospace;font-size:10px;color:#444;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:700}
 
-.ir{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.ir{display:flex;align-items:center;gap:8px;margin-bottom:10px;position:relative}
 .ir label{font-size:12px;color:var(--dim);width:95px;font-weight:600}
 .ir input{flex:1;background:#0a0a0f;border:2px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:700;text-align:right;outline:none}
 .ir input:focus{border-color:var(--accent)}
-.ir input[type=date]{font-size:13px;text-align:center}
+.ir input[type=date]{
+  font-size:14px;
+  text-align:left;
+  cursor:pointer;
+  padding:12px 14px;
+  background:#0a0a0f url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='4' width='18' height='18' rx='2' ry='2'%3E%3C/rect%3E%3Cline x1='16' y1='2' x2='16' y2='6'%3E%3C/line%3E%3Cline x1='8' y1='2' x2='8' y2='6'%3E%3C/line%3E%3Cline x1='3' y1='10' x2='21' y2='10'%3E%3C/line%3E%3C/svg%3E") no-repeat right 12px center;
+  background-size: 18px;
+  padding-right: 40px;
+  color-scheme: dark;
+}
+.ir input[type=date]::-webkit-calendar-picker-indicator{
+  background:transparent;
+  cursor:pointer;
+  position:absolute;
+  right:0;
+  width:40px;
+  height:100%;
+  opacity:0;
+}
 .ir .u{font-size:12px;color:var(--dim);width:16px}
+.date-info{font-size:11px;color:var(--accent);margin-top:-4px;margin-bottom:8px;padding-left:95px;font-family:'JetBrains Mono',monospace}
 
 .btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px}
 .btn-bt{background:linear-gradient(135deg,#f97316,#ef4444);color:#fff}
@@ -72,11 +91,11 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
     <button class="preset-btn" onclick="setRange('2025-04-01','2025-06-30')">V자 반등</button>
   </div>
   
-  <div class="ir">
+  <div class="ir" onclick="document.getElementById('start-date').showPicker?.()">
     <label>시작일</label>
     <input type="date" id="start-date" value="2020-01-02" min="2020-01-02" max="2026-04-17">
   </div>
-  <div class="ir">
+  <div class="ir" onclick="document.getElementById('end-date').showPicker?.()">
     <label>종료일</label>
     <input type="date" id="end-date" value="2026-04-17" min="2020-01-02" max="2026-04-17">
   </div>
