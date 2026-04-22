@@ -44,12 +44,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .ir label{font-size:13px;color:var(--dim);width:85px;font-weight:600}
 .ir input{flex:1;background:#0a0a0f;border:2px solid var(--border);border-radius:10px;padding:10px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:17px;font-weight:700;text-align:right;outline:none;-webkit-appearance:none}
 .ir input:focus{border-color:var(--accent)}
+.ir input.auto{background:#0f0a1a;color:var(--accent)}
 .ir .u{font-size:13px;color:var(--dim);width:16px;font-weight:700}
 
 .btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;margin-top:8px}
 .btn-b{background:var(--accent);color:#fff}
+.btn-s{background:var(--red);color:#fff}
 .btn-d{background:var(--card2);color:var(--dim);border:1px solid var(--border)}
 .btn-r{background:#1a0a0a;color:var(--red);border:1px solid var(--red)}
+.btn-seed{background:#0a1a0a;color:var(--green);border:1px solid var(--green);font-size:12px;padding:10px}
 .btn-fetch{background:#1a1a2a;color:var(--accent);border:1px solid var(--accent);font-size:12px;padding:10px}
 .btn-bt{background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;text-decoration:none;display:block;text-align:center}
 
@@ -64,7 +67,12 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .order .val{font-family:'JetBrains Mono',monospace;font-size:18px;font-weight:800;color:var(--text);margin-top:3px}
 .order .desc{font-size:11px;color:var(--dim);margin-top:4px}
 
-.tier-item{background:#0a0a0f;border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px}
+/* ⭐ 슬라이드 매도 (Swipe to Sell) */
+.tier-wrap{position:relative;overflow:hidden;margin-bottom:8px;border-radius:12px}
+.tier-sell-bg{position:absolute;top:0;right:0;bottom:0;width:100%;background:linear-gradient(90deg,rgba(239,68,68,0.1),var(--red));display:flex;align-items:center;justify-content:flex-end;padding-right:20px;color:#fff;font-weight:800;font-family:'JetBrains Mono',monospace;font-size:14px}
+.tier-sell-bg::before{content:"← 밀어서 매도"}
+.tier-item{background:#0a0a0f;border:1px solid var(--border);border-radius:12px;padding:12px;position:relative;touch-action:pan-y;transition:transform 0.2s;cursor:grab}
+.tier-item.dragging{transition:none;cursor:grabbing}
 .tier-item .top-row{display:flex;justify-content:space-between;align-items:center}
 .tier-item .tid{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);font-weight:700}
 .tier-item .info{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;color:var(--text)}
@@ -75,6 +83,15 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .tier-item.zone-top{border-left:3px solid var(--top)}
 .tier-item.zone-mid{border-left:3px solid var(--mid)}
 .tier-item.zone-bot{border-left:3px solid var(--bot)}
+.tier-sell-btn{background:var(--red);color:#fff;border:none;padding:6px 12px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;margin-left:8px}
+
+/* 모달 */
+.modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+.modal{background:var(--card);border:1px solid var(--accent);border-radius:16px;padding:20px;max-width:400px;width:100%}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);margin-bottom:12px}
+.modal .desc{color:var(--dim);font-size:13px;margin-bottom:16px;line-height:1.6}
+.modal .btn-row{display:flex;gap:8px;margin-top:16px}
+.modal .btn-row .btn{margin-top:0}
 
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}
 .sb{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center}
@@ -83,6 +100,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 .warn{background:#1a0a0a;border:1px solid var(--red);border-radius:12px;padding:14px;color:var(--red);font-weight:700;text-align:center;font-size:13px}
 .footer{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#333;margin-top:20px;letter-spacing:1px}
+
+.danger-zone{background:#1a0a0a;border:2px dashed var(--red);border-radius:12px;padding:14px;margin-top:12px}
+.danger-zone .title{color:var(--red);font-size:11px;font-weight:700;letter-spacing:2px;margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -126,6 +146,9 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 <a href="bt.html" class="btn btn-bt">📊 백테스트 페이지로!</a>
 
 <div class="footer">SOXL HUNTER v8 · 3구간 자동전환</div>
+
+<!-- 모달 컨테이너 -->
+<div id="modal-container"></div>
 
 <script>
 // 설정 (HUNTER v8 안전 3구간)
@@ -218,7 +241,7 @@ function renderStatus() {
   $('status-body').innerHTML = h;
 }
 
-// 핵심 수정: render 시 input 포커스 유지!
+// 핵심: render 시 input 포커스 유지!
 let activeInputId = null;
 let activeInputCursor = 0;
 
@@ -266,7 +289,7 @@ function render() {
       <div class="ir"><label>시드</label><input type="number" id="seed-in" value="${seed}" onchange="updSeed()"><span class="u">$</span></div>
       <div class="ir"><label>현재가</label><input type="number" step="0.01" id="cp" value="${curPrice||''}" onchange="updPrice()"><span class="u">$</span></div>
       <div class="ir"><label>20일 전고</label><input type="number" step="0.01" id="h20" value="${high20||''}" onchange="updHigh()"><span class="u">$</span></div>
-      <button class="btn btn-fetch" onclick="fetchAuto()">🔄 야후에서 자동 가져오기</button>
+      <button class="btn btn-fetch" onclick="fetchAuto()">🔄 야후에서 자동 가져오기 (확정 종가)</button>
     </div>`;
     
     if (rem > 0) {
@@ -322,13 +345,19 @@ function render() {
       h += `</div>`;
     }
     
+    // ⭐⭐⭐ 수정 #2: 자동 계산 체결 기록 ⭐⭐⭐
+    // 체결가만 입력 → 유닛/주수 자동 계산!
     if (rem > 0) {
       h += `<div class="card">
-        <div class="ct">체결 기록 (매수)</div>
-        <div class="ir"><label>체결가</label><input type="number" step="0.01" id="fp" placeholder="$" onchange="upFill()"><span class="u">$</span></div>
-        <div class="ir"><label>유닛</label><input type="number" id="fu" value="${UP}" onchange="upFill()"><span class="u">u</span></div>
-        <div class="ir"><label>주수</label><input type="number" id="fs" placeholder="자동계산"><span class="u">주</span></div>
+        <div class="ct">💰 체결 기록 (매수)</div>
+        <div class="ir"><label>체결가</label><input type="number" step="0.01" id="fp" placeholder="체결가 입력!" oninput="upFillAuto()"><span class="u">$</span></div>
+        <div class="ir"><label>유닛</label><input type="number" class="auto" id="fu" value="${UP}" readonly><span class="u">u</span></div>
+        <div class="ir"><label>주수</label><input type="number" class="auto" id="fs" placeholder="자동" readonly><span class="u">주</span></div>
         <div id="fi" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);margin:8px 0;padding:10px;background:#0a0a0f;border-radius:8px"></div>
+        <div style="display:flex;gap:6px;margin-top:8px">
+          <button class="btn btn-d" style="flex:1;margin:0" onclick="setUnit(${UP})">상승일 ${UP}u</button>
+          <button class="btn btn-d" style="flex:1;margin:0" onclick="setUnit(${DN})">하락일 ${DN}u</button>
+        </div>
         <button class="btn btn-b" onclick="doBuy()">T${pos.length+1} 기록</button>
       </div>`;
     }
@@ -341,7 +370,7 @@ function render() {
       </div>`;
     } else {
       h += `<div class="card">
-        <div class="ct">보유 티어 (${pos.length}개)</div>`;
+        <div class="ct">보유 티어 (${pos.length}개) · 밀어서 매도</div>`;
       pos.forEach((p, idx) => {
         const pz = ZONES[p.z];
         const sellPrice = (p.e * (1+pz.tp)).toFixed(2);
@@ -350,15 +379,22 @@ function render() {
         const pnl = curPrice ? ((curPrice - p.e)/p.e*100).toFixed(1) : 0;
         const cls = pnl >= 0 ? 'up' : 'dn';
         
-        h += `<div class="tier-item zone-${p.z}">
-          <div class="top-row">
-            <div>
-              <span class="tid">T${idx+1}</span>
-              <span class="info">${p.s}주@$${p.e} (${p.u}u)</span>
+        // ⭐⭐⭐ 수정 #4: 슬라이드 매도 ⭐⭐⭐
+        h += `<div class="tier-wrap">
+          <div class="tier-sell-bg"></div>
+          <div class="tier-item zone-${p.z}" data-idx="${idx}" ontouchstart="touchStart(event,${idx})" ontouchmove="touchMove(event,${idx})" ontouchend="touchEnd(event,${idx})" onmousedown="mouseStart(event,${idx})">
+            <div class="top-row">
+              <div>
+                <span class="tid">T${idx+1}</span>
+                <span class="info">${p.s}주@$${p.e} (${p.u}u)</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <div class="pnl ${cls}">${pnl>=0?'+':''}${pnl}%</div>
+                <button class="tier-sell-btn" onclick="promptSell(${idx})">매도</button>
+              </div>
             </div>
-            <div class="pnl ${cls}">${pnl>=0?'+':''}${pnl}%</div>
+            <div class="meta">${p.d} · D+${days} · 잔여${rm}일 · ${pz.label} · 매도$${sellPrice}</div>
           </div>
-          <div class="meta">${p.d} · D+${days} · 잔여${rm}일 · ${pz.label} · 매도$${sellPrice}</div>
         </div>`;
       });
       
@@ -379,6 +415,13 @@ function render() {
       <div class="sb"><div class="v">${pos.length}</div><div class="l">보유</div></div>
       <div class="sb"><div class="v">${tw}/${ts.length}</div><div class="l">승/매도</div></div>
     </div>`;
+    
+    // ⭐⭐⭐ 수정 #6: 수동 시드 재설정 ⭐⭐⭐
+    h += `<div class="card">
+      <div class="ct">💰 시드 관리</div>
+      <div class="status-row"><span class="k">현재 시드</span><span class="v" style="color:var(--green)">$${seed.toLocaleString()}</span></div>
+      <button class="btn btn-seed" onclick="promptSeedReset()">💰 시드 재설정</button>
+    </div>`;
   }
   
   if (tab === 'h') {
@@ -398,8 +441,17 @@ function render() {
         </div>`;
       });
       h += `</div>`;
-      h += `<button class="btn btn-r" onclick="clearHist()">⚠️ 기록 초기화</button>`;
+      // ⭐ 수정 #3: 기록 탭에 초기화 버튼 제거!
     }
+    
+    // ⭐⭐⭐ 수정 #3: 진짜 전체 초기화 (Danger Zone) ⭐⭐⭐
+    h += `<div class="card">
+      <div class="danger-zone">
+        <div class="title">⚠️ 위험 영역</div>
+        <div style="color:var(--dim);font-size:12px;margin-bottom:10px">전체 데이터(시드/티어/기록) 초기화</div>
+        <button class="btn btn-r" onclick="confirmFullReset()">💀 전체 초기화 (모두 삭제)</button>
+      </div>
+    </div>`;
   }
   
   if (tab === 'g') {
@@ -422,6 +474,16 @@ function render() {
         <ul style="list-style:none;margin:10px 0;padding-left:10px;font-size:12px">
           <li>① 전날종가×1.15 LOC → 2주</li>
           <li>② 전날종가-$0.01 LOC → 2주 (하락만)</li>
+        </ul>
+        
+        <p style="margin-top:16px"><b style="color:var(--accent)">🆕 v8 새 기능</b></p>
+        <ul style="list-style:none;font-size:12px;color:var(--dim);padding-left:10px">
+          <li>✅ 확정 전일 종가만 (장중 X)</li>
+          <li>✅ 체결가 → 주수 자동 계산</li>
+          <li>✅ 슬라이드 매도 (← 밀기)</li>
+          <li>✅ 완전 청산 시 시드 업데이트 알림</li>
+          <li>✅ 수동 시드 재설정 버튼</li>
+          <li>✅ 전체 초기화 (기록 탭 하단)</li>
         </ul>
         
         <p style="margin-top:16px"><b style="color:var(--green)">🏆 백테 (2020~2026)</b></p>
@@ -467,22 +529,34 @@ function updHigh() {
   render(); 
 }
 
-function upFill() {
-  const fp = gv('fp'), fu = gv('fu');
-  if (!fp) return;
+// ⭐⭐⭐ 수정 #2: 자동 계산 ⭐⭐⭐
+function upFillAuto() {
+  const fp = gv('fp');
+  if (!fp) {
+    $('fs').value = '';
+    $('fi').innerHTML = '';
+    return;
+  }
+  const fu = gv('fu') || UP;
   const uw = seed/TU;
   const shares = Math.floor(fu * uw / fp);
-  if ($('fs')) $('fs').value = shares;
+  $('fs').value = shares;
+  
   const z = zoneDesc();
   const pz = ZONES[z.zone];
   const sell = (fp * (1+pz.tp)).toFixed(2);
-  $('fi').innerHTML = `유닛당 $${uw.toFixed(0)} · ${fu}u = $${(fu*uw).toFixed(0)} · ${shares}주<br>
+  $('fi').innerHTML = `유닛당 $${uw.toFixed(0)} · ${fu}u = $${(fu*uw).toFixed(0)} · <b style="color:var(--green)">${shares}주</b><br>
     구간: <b style="color:var(--${z.zone})">${pz.label}</b> · 매도 <b>$${sell}</b> (+${(pz.tp*100).toFixed(1)}%) · 강제 ${pz.fd}일`;
+}
+
+function setUnit(u) {
+  $('fu').value = u;
+  upFillAuto();
 }
 
 function doBuy() {
   const fp = gv('fp'), fu = gv('fu'), fs = gv('fs');
-  if (!fp || !fu || !fs) return alert('체결 정보를 입력하세요');
+  if (!fp || !fu || !fs) return alert('체결가를 입력하세요 (주수는 자동 계산)');
   const z = getZone();
   pos.push({e: fp, u: fu, s: fs, d: td(), z: z});
   hist.push({a:'B', d: td(), e: fp, u: fu, s: fs, z: z});
@@ -491,26 +565,260 @@ function doBuy() {
   sw('t');
 }
 
-function clearHist() {
-  if (!confirm('기록을 초기화하시겠습니까?')) return;
+// ⭐⭐⭐ 수정 #4 + #5: 매도 + 완전 청산 알림 + T번호 재정렬 ⭐⭐⭐
+function promptSell(idx) {
+  const p = pos[idx];
+  const pz = ZONES[p.z];
+  const defaultPrice = (p.e * (1+pz.tp)).toFixed(2);
+  
+  showModal(`
+    <h3>T${idx+1} 매도</h3>
+    <div class="desc">매수가 <b>$${p.e}</b> · ${p.s}주 · ${pz.label}<br>
+      추천 매도가: <b style="color:var(--green)">$${defaultPrice}</b> (+${(pz.tp*100).toFixed(1)}%)</div>
+    <div class="ir"><label>매도가</label><input type="number" step="0.01" id="sell-price" value="${defaultPrice}"><span class="u">$</span></div>
+    <div class="btn-row">
+      <button class="btn btn-d" onclick="closeModal()">취소</button>
+      <button class="btn btn-s" onclick="doSell(${idx})">매도!</button>
+    </div>
+  `);
+}
+
+function doSell(idx) {
+  const sellPrice = parseFloat($('sell-price').value);
+  if (!sellPrice || sellPrice <= 0) return alert('매도가를 입력하세요');
+  
+  const p = pos[idx];
+  const pnl = (sellPrice - p.e) / p.e * 100;
+  const realized = (sellPrice - p.e) * p.s;
+  
+  // 기록 남기기
+  hist.push({
+    a: 'S',
+    d: td(),
+    e: sellPrice,
+    u: p.u,
+    s: p.s,
+    z: p.z,
+    pnl: pnl,
+    buyPrice: p.e,
+    realized: realized
+  });
+  
+  // 포지션 제거 (T번호 자동 재정렬 = 배열에서 제거만 하면 idx 자동!)
+  pos.splice(idx, 1);
+  save();
+  closeModal();
+  
+  // ⭐⭐⭐ 수정 #5: 완전 청산 감지 ⭐⭐⭐
+  if (pos.length === 0) {
+    // 최근 매수부터 이번 매도까지 수익 계산
+    checkFullLiquidation();
+  } else {
+    alert(`T${idx+1} 매도 완료!\n${p.s}주 @ $${sellPrice}\n수익: ${pnl>=0?'+':''}${pnl.toFixed(1)}% ($${realized.toFixed(0)})`);
+    render();
+  }
+}
+
+function checkFullLiquidation() {
+  // 마지막 청산까지의 실현 수익 계산
+  // 가장 최근 "완전 청산" 이후의 매도들만 합산
+  let totalRealized = 0;
+  let sellCount = 0;
+  
+  // hist 역순 순회, 마지막 매수 이후 매도까지
+  // 더 간단히: 최근 매도들 계산
+  for (let i = hist.length - 1; i >= 0; i--) {
+    const r = hist[i];
+    if (r.a === 'S' && r.realized !== undefined) {
+      totalRealized += r.realized;
+      sellCount++;
+    }
+    // 이전 완전 청산 지점까지만 (optional)
+  }
+  
+  const newSeed = seed + totalRealized;
+  const pct = (totalRealized / seed * 100).toFixed(1);
+  
+  showModal(`
+    <h3>🎉 완전 청산!</h3>
+    <div class="desc">
+      모든 포지션이 청산되었습니다!<br><br>
+      💰 총 실현 수익: <b style="color:${totalRealized>=0?'var(--green)':'var(--red)'}">$${totalRealized.toFixed(0)} (${pct>=0?'+':''}${pct}%)</b><br>
+      📊 매도 횟수: ${sellCount}회<br><br>
+      <div style="background:#0a1a0a;padding:12px;border-radius:8px;border:1px solid var(--green);margin-top:8px">
+        <div style="font-size:11px;color:var(--dim)">현재 시드</div>
+        <div style="font-size:18px;font-weight:800">$${seed.toLocaleString()}</div>
+        <div style="font-size:11px;color:var(--dim);margin-top:8px">새 시드 (복리 반영)</div>
+        <div style="font-size:20px;font-weight:800;color:var(--green)">$${newSeed.toFixed(0)}</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-d" onclick="closeModal();render()">나중에</button>
+      <button class="btn btn-b" onclick="applyNewSeed(${newSeed})">✅ 복리 적용!</button>
+    </div>
+  `);
+}
+
+function applyNewSeed(newSeed) {
+  seed = Math.round(newSeed);
+  save();
+  closeModal();
+  alert(`💰 시드 업데이트!\n새 시드: $${seed.toLocaleString()}\n\n다음 라운드 시작!`);
+  render();
+}
+
+// ⭐⭐⭐ 수정 #6: 수동 시드 재설정 ⭐⭐⭐
+function promptSeedReset() {
+  showModal(`
+    <h3>💰 시드 재설정</h3>
+    <div class="desc">
+      현재 시드: <b>$${seed.toLocaleString()}</b><br>
+      새 시드 금액을 입력하세요.<br><br>
+      <small style="color:var(--red)">⚠️ 이 작업은 유닛 크기를 변경합니다.</small>
+    </div>
+    <div class="ir"><label>새 시드</label><input type="number" id="new-seed" value="${seed}" placeholder="$"><span class="u">$</span></div>
+    <div class="btn-row">
+      <button class="btn btn-d" onclick="closeModal()">취소</button>
+      <button class="btn btn-b" onclick="applyManualSeed()">재설정</button>
+    </div>
+  `);
+}
+
+function applyManualSeed() {
+  const ns = parseFloat($('new-seed').value);
+  if (!ns || ns <= 0) return alert('올바른 금액을 입력하세요');
+  if (!confirm(`시드를 $${seed.toLocaleString()} → $${ns.toLocaleString()}(으)로 변경할까요?`)) return;
+  seed = ns;
+  save();
+  closeModal();
+  alert(`시드 재설정 완료!\n$${seed.toLocaleString()}`);
+  render();
+}
+
+// ⭐⭐⭐ 수정 #3: 진짜 전체 초기화 ⭐⭐⭐
+function confirmFullReset() {
+  showModal(`
+    <h3 style="color:var(--red)">⚠️ 전체 초기화</h3>
+    <div class="desc">
+      모든 데이터가 <b style="color:var(--red)">영구 삭제</b>됩니다:<br>
+      • 시드 → $30,000 (기본값)<br>
+      • 현재가 / 20일 전고<br>
+      • 보유 티어 ${pos.length}개<br>
+      • 매매 기록 ${hist.length}건<br><br>
+      <b>정말 초기화하시겠습니까?</b>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-d" onclick="closeModal()">취소</button>
+      <button class="btn btn-r" onclick="doFullReset()">💀 전체 초기화</button>
+    </div>
+  `);
+}
+
+function doFullReset() {
+  if (!confirm('마지막 확인: 정말 모든 데이터를 삭제할까요?')) return;
+  seed = 30000;
+  curPrice = 0;
+  high20 = 0;
+  pos = [];
   hist = [];
   save();
-  render();
+  closeModal();
+  alert('전체 초기화 완료!');
+  sw('t');
+}
+
+// 모달 시스템
+function showModal(innerHTML) {
+  $('modal-container').innerHTML = `<div class="modal-bg" onclick="if(event.target===this)closeModal()">
+    <div class="modal">${innerHTML}</div>
+  </div>`;
+}
+function closeModal() {
+  $('modal-container').innerHTML = '';
+}
+
+// ⭐ 슬라이드 매도 로직 (터치/마우스)
+let swipeState = {startX: 0, currentX: 0, idx: null, el: null};
+
+function touchStart(e, idx) {
+  swipeState.startX = e.touches[0].clientX;
+  swipeState.idx = idx;
+  swipeState.el = e.currentTarget;
+  swipeState.el.classList.add('dragging');
+}
+
+function touchMove(e, idx) {
+  if (swipeState.idx !== idx) return;
+  swipeState.currentX = e.touches[0].clientX;
+  const dx = swipeState.currentX - swipeState.startX;
+  if (dx < 0) { // 왼쪽으로 밀 때만
+    const clamped = Math.max(dx, -200);
+    swipeState.el.style.transform = `translateX(${clamped}px)`;
+  }
+}
+
+function touchEnd(e, idx) {
+  if (swipeState.idx !== idx) return;
+  const dx = swipeState.currentX - swipeState.startX;
+  swipeState.el.classList.remove('dragging');
+  swipeState.el.style.transform = '';
+  
+  // 100px 이상 밀었으면 매도!
+  if (dx < -100) {
+    promptSell(idx);
+  }
+  
+  swipeState = {startX: 0, currentX: 0, idx: null, el: null};
+}
+
+// 마우스용 (데스크탑 테스트)
+function mouseStart(e, idx) {
+  if (e.target.tagName === 'BUTTON') return; // 버튼 클릭은 제외
+  swipeState.startX = e.clientX;
+  swipeState.idx = idx;
+  swipeState.el = e.currentTarget;
+  swipeState.el.classList.add('dragging');
+  
+  const onMove = (ev) => {
+    swipeState.currentX = ev.clientX;
+    const dx = ev.clientX - swipeState.startX;
+    if (dx < 0) {
+      const clamped = Math.max(dx, -200);
+      swipeState.el.style.transform = `translateX(${clamped}px)`;
+    }
+  };
+  
+  const onUp = () => {
+    const dx = swipeState.currentX - swipeState.startX;
+    if (swipeState.el) {
+      swipeState.el.classList.remove('dragging');
+      swipeState.el.style.transform = '';
+    }
+    if (dx < -100) {
+      promptSell(idx);
+    }
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup', onUp);
+    swipeState = {startX: 0, currentX: 0, idx: null, el: null};
+  };
+  
+  document.addEventListener('mousemove', onMove);
+  document.addEventListener('mouseup', onUp);
 }
 
 async function fetchAuto() {
   try {
     const res = await fetch('/api/quote');
     const data = await res.json();
-    if (data.price) {
-      curPrice = data.price;
+    if (data.error) {
+      alert('자동 가져오기 실패: ' + data.error);
+      return;
     }
-    if (data.high20) {
-      high20 = data.high20;
-    }
+    if (data.price) curPrice = data.price;
+    if (data.high20) high20 = data.high20;
     save();
     render();
-    alert(`자동 업데이트!\n현재가: $${curPrice}\n20일 전고: $${high20}\n구간: ${ZONES[getZone()].label}`);
+    alert(`✅ 자동 업데이트 (확정 종가)\n날짜: ${data.lastDate}\n현재가: $${curPrice}\n20일 전고: $${high20}\n구간: ${ZONES[getZone()].label}\n시장 상태: ${data.marketState}`);
   } catch(e) {
     alert('자동 가져오기 실패.\n수동으로 입력해주세요.');
   }
