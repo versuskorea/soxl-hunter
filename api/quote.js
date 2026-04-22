@@ -1,6 +1,7 @@
 // api/quote.js - Vercel Serverless Function
 // SOXL 전일 종가 + 20일 전고점 자동 조회
-// ⭐ 백테와 일치: 항상 "확정된 종가" 사용!
+// ⭐ v8 수정: 항상 "확정된 전일 종가"만 사용! (장중 가격 X)
+// ⭐ 고가도 종가 기준으로 계산!
 
 export default async function handler(req, res) {
   // CORS
@@ -36,14 +37,51 @@ export default async function handler(req, res) {
     const quotes = result.indicators.quote[0];
     const closes = quotes.close;
     
-    // ⭐ 백테 호환: "확정된 마지막 종가"만 사용!
-    // 장중 가격이 아니라, 완료된 일봉의 종가!
-    const validCloses = closes.filter(c => c !== null);
-    const lastClose = validCloses[validCloses.length - 1];
+    // ⭐⭐⭐ v8 핵심 수정 ⭐⭐⭐
+    // 마지막 캔들이 오늘(장중)이면 제외!
+    // 항상 "확정된 종가"만 사용!
     
-    // 20일 전고점
-    const last20 = validCloses.slice(-20);
-    const high20 = Math.max(...last20);
+    // 1. null 제외하고 유효한 (timestamp, close) 쌍만 추출
+    const validData = [];
+    for (let i = 0; i < timestamps.length; i++) {
+      if (closes[i] !== null && closes[i] !== undefined) {
+        validData.push({
+          ts: timestamps[i],
+          close: closes[i],
+          date: new Date(timestamps[i] * 1000).toISOString().slice(0, 10)
+        });
+      }
+    }
+    
+    // 2. 오늘 날짜 캔들 감지 및 제거 (장중이면 확정 X!)
+    const todayUTC = new Date().toISOString().slice(0, 10);
+    const marketState = meta.marketState; // REGULAR, PRE, POST, CLOSED
+    
+    // 장이 열려있거나 후장이면 오늘 캔들 제거
+    // (장 마감 후 CLOSED 상태면 오늘 종가도 확정!)
+    const isMarketOpen = marketState === 'REGULAR' || marketState === 'PRE';
+    
+    let confirmedData = validData;
+    if (isMarketOpen && validData.length > 0) {
+      const lastDate = validData[validData.length - 1].date;
+      if (lastDate === todayUTC) {
+        // 오늘 장중이면 제거!
+        confirmedData = validData.slice(0, -1);
+      }
+    }
+    
+    if (confirmedData.length === 0) {
+      throw new Error('No confirmed close data');
+    }
+    
+    // 3. 확정된 마지막 종가 (어제 종가)
+    const lastClose = confirmedData[confirmedData.length - 1].close;
+    const lastDate = confirmedData[confirmedData.length - 1].date;
+    
+    // 4. ⭐ 20일 전고점도 "종가" 기준!
+    // (intraday 고가가 아니라 확정 종가 중 최고!)
+    const last20Closes = confirmedData.slice(-20).map(d => d.close);
+    const high20 = Math.max(...last20Closes);
     
     // 낙폭
     const drawdown = ((lastClose - high20) / high20 * 100).toFixed(2);
@@ -54,9 +92,6 @@ export default async function handler(req, res) {
     else if (drawdown <= -15) zone = 'bot';
     else zone = 'mid';
     
-    const lastTs = timestamps[timestamps.length - 1];
-    const lastDate = new Date(lastTs * 1000).toISOString().slice(0, 10);
-    
     return res.status(200).json({
       symbol: 'SOXL',
       price: parseFloat(lastClose.toFixed(2)),
@@ -64,8 +99,10 @@ export default async function handler(req, res) {
       drawdown: parseFloat(drawdown),
       zone: zone,
       lastDate: lastDate,
-      marketState: meta.marketState,
-      note: '확정 종가 기준 (백테 호환)',
+      marketState: marketState,
+      marketOpen: isMarketOpen,
+      dataPoints: confirmedData.length,
+      note: '확정 종가만 사용 (장중 제외) · 고가도 종가 기준',
       timestamp: new Date().toISOString()
     });
     
