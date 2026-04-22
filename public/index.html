@@ -349,14 +349,15 @@ function render() {
     // 체결가만 입력 → 유닛/주수 자동 계산!
     if (rem > 0) {
       h += `<div class="card">
-        <div class="ct">💰 체결 기록 (매수)</div>
+        <div class="ct">💰 체결 기록 (매수) · 자동 유닛 감지</div>
         <div class="ir"><label>체결가</label><input type="number" step="0.01" id="fp" placeholder="체결가 입력!" oninput="upFillAuto()"><span class="u">$</span></div>
         <div class="ir"><label>유닛</label><input type="number" class="auto" id="fu" value="${UP}" readonly><span class="u">u</span></div>
         <div class="ir"><label>주수</label><input type="number" class="auto" id="fs" placeholder="자동" readonly><span class="u">주</span></div>
         <div id="fi" style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--dim);margin:8px 0;padding:10px;background:#0a0a0f;border-radius:8px"></div>
         <div style="display:flex;gap:6px;margin-top:8px">
-          <button class="btn btn-d" style="flex:1;margin:0" onclick="setUnit(${UP})">상승일 ${UP}u</button>
-          <button class="btn btn-d" style="flex:1;margin:0" onclick="setUnit(${DN})">하락일 ${DN}u</button>
+          <button class="btn btn-d" style="flex:1;margin:0;font-size:11px" onclick="resetUnitAuto()">🤖 자동</button>
+          <button class="btn btn-d" style="flex:1;margin:0;font-size:11px" onclick="setUnit(${UP})">수동 ${UP}u</button>
+          <button class="btn btn-d" style="flex:1;margin:0;font-size:11px" onclick="setUnit(${DN})">수동 ${DN}u</button>
         </div>
         <button class="btn btn-b" onclick="doBuy()">T${pos.length+1} 기록</button>
       </div>`;
@@ -480,6 +481,9 @@ function render() {
         <ul style="list-style:none;font-size:12px;color:var(--dim);padding-left:10px">
           <li>✅ 확정 전일 종가만 (장중 X)</li>
           <li>✅ 체결가 → 주수 자동 계산</li>
+          <li>✅ <b style="color:var(--green)">자동 유닛 감지!</b> 체결가 vs 어제종가</li>
+          <li>&nbsp;&nbsp;&nbsp;&nbsp;- 체결 < 어제 = 하락일 (4u)</li>
+          <li>&nbsp;&nbsp;&nbsp;&nbsp;- 체결 >= 어제 = 상승일 (2u)</li>
           <li>✅ 슬라이드 매도 (← 밀기)</li>
           <li>✅ 완전 청산 시 시드 업데이트 알림</li>
           <li>✅ 수동 시드 재설정 버튼</li>
@@ -529,15 +533,42 @@ function updHigh() {
   render(); 
 }
 
-// ⭐⭐⭐ 수정 #2: 자동 계산 ⭐⭐⭐
+// ⭐⭐⭐ 수정 #2: 자동 계산 (자동 유닛 감지!) ⭐⭐⭐
+let manualUnitOverride = false; // 수동 유닛 설정 여부
+
 function upFillAuto() {
   const fp = gv('fp');
   if (!fp) {
     $('fs').value = '';
     $('fi').innerHTML = '';
+    if (!manualUnitOverride) $('fu').value = UP;
     return;
   }
-  const fu = gv('fu') || UP;
+  
+  // ⭐ 자동 유닛 감지!
+  // 체결가 < 어제종가 → 하락일 (4u)
+  // 체결가 >= 어제종가 → 상승일 (2u)
+  let fu;
+  let autoDetected = '';
+  
+  if (manualUnitOverride) {
+    fu = gv('fu') || UP;
+    autoDetected = ' <span style="color:var(--red)">⚠️ 수동</span>';
+  } else if (curPrice && fp < curPrice) {
+    fu = DN;
+    $('fu').value = DN;
+    const dropPct = ((fp - curPrice) / curPrice * 100).toFixed(1);
+    autoDetected = ` <span style="color:var(--red)">🔻 하락일! (${dropPct}%)</span>`;
+  } else if (curPrice && fp >= curPrice) {
+    fu = UP;
+    $('fu').value = UP;
+    const upPct = ((fp - curPrice) / curPrice * 100).toFixed(1);
+    autoDetected = ` <span style="color:var(--green)">🔺 상승일 (+${upPct}%)</span>`;
+  } else {
+    fu = gv('fu') || UP;
+    autoDetected = ' <span style="color:var(--dim)">(어제종가 입력 필요)</span>';
+  }
+  
   const uw = seed/TU;
   const shares = Math.floor(fu * uw / fp);
   $('fs').value = shares;
@@ -545,12 +576,22 @@ function upFillAuto() {
   const z = zoneDesc();
   const pz = ZONES[z.zone];
   const sell = (fp * (1+pz.tp)).toFixed(2);
-  $('fi').innerHTML = `유닛당 $${uw.toFixed(0)} · ${fu}u = $${(fu*uw).toFixed(0)} · <b style="color:var(--green)">${shares}주</b><br>
+  
+  const prevInfo = curPrice ? `어제 $${curPrice} → 오늘 $${fp}${autoDetected}<br>` : '';
+  
+  $('fi').innerHTML = `${prevInfo}
+    유닛당 $${uw.toFixed(0)} · <b>${fu}u</b> = $${(fu*uw).toFixed(0)} · <b style="color:var(--green)">${shares}주</b><br>
     구간: <b style="color:var(--${z.zone})">${pz.label}</b> · 매도 <b>$${sell}</b> (+${(pz.tp*100).toFixed(1)}%) · 강제 ${pz.fd}일`;
 }
 
 function setUnit(u) {
+  manualUnitOverride = true; // 수동 모드!
   $('fu').value = u;
+  upFillAuto();
+}
+
+function resetUnitAuto() {
+  manualUnitOverride = false; // 자동 모드 복귀
   upFillAuto();
 }
 
