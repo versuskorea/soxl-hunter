@@ -362,6 +362,24 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 <div id="modal-container"></div>
 
 <script>
+// 🛡️ 전역 에러 핸들러 - 에러 발생 시 디버깅용
+window.addEventListener('error', function(e) {
+  console.error('[HUNTER v11 전역 에러]', e.error || e.message, e.filename, e.lineno);
+  const body = document.getElementById('body');
+  if (body && !body.dataset.errored) {
+    body.dataset.errored = '1';
+    body.innerHTML = `<div style="background:#1a0a0a;border:1px solid #ef4444;border-radius:12px;padding:16px;color:#fff;font-family:monospace;font-size:12px;line-height:1.6">
+      <b style="color:#ef4444">⚠️ 오류 발생</b><br><br>
+      메시지: ${e.message || '알 수 없음'}<br>
+      위치: ${(e.filename||'').split('/').pop()}:${e.lineno || '?'}<br><br>
+      <b>복구 방법:</b><br>
+      1. 상단 "← SOXL 홈" 눌러서 홈으로<br>
+      2. 그래도 안되면 아래 버튼으로 데이터 리셋<br><br>
+      <button onclick="if(confirm('모든 데이터 초기화?')){localStorage.removeItem('v11-portfolios');localStorage.removeItem('v11-active');location.reload();}" style="background:#ef4444;color:#fff;border:none;padding:8px 14px;border-radius:8px;font-weight:700;cursor:pointer">💀 전체 데이터 초기화</button>
+    </div>`;
+  }
+});
+
 // ========== 전역 설정 ==========
 const TU = 20;
 const UP = 2;
@@ -457,6 +475,53 @@ if (!portfolios[activeSymbol]) {
   }
 }
 
+// 🛡️ 데이터 무결성 검증/정리 (v8→v11 마이그레이션 대응)
+function sanitizePortfolio(p) {
+  if (!p) return { seed: 10000, price: 0, high20: 0, pos: [], hist: [], vol: null, volDate: null };
+  
+  // 기본 필드 보정
+  p.seed = Number(p.seed) || 10000;
+  p.price = Number(p.price) || 0;
+  p.high20 = Number(p.high20) || 0;
+  p.pos = Array.isArray(p.pos) ? p.pos : [];
+  p.hist = Array.isArray(p.hist) ? p.hist : [];
+  p.vol = p.vol ? Number(p.vol) : null;
+  p.volDate = p.volDate || null;
+  
+  // pos 각 레코드 검증
+  p.pos = p.pos.filter(item => item && typeof item === 'object').map(item => ({
+    e: Number(item.e) || 0,
+    u: Number(item.u) || 2,
+    s: Number(item.s) || 0,
+    d: typeof item.d === 'string' && item.d ? item.d : new Date().toISOString().slice(0,10),
+    z: (item.z === 'top' || item.z === 'mid' || item.z === 'bot') ? item.z : 'top'
+  }));
+  
+  // hist 각 레코드 검증
+  p.hist = p.hist.filter(item => item && typeof item === 'object').map(item => {
+    const clean = {
+      a: item.a === 'S' ? 'S' : 'B',
+      d: typeof item.d === 'string' && item.d ? item.d : new Date().toISOString().slice(0,10),
+      e: Number(item.e) || 0,
+      u: Number(item.u) || 2,
+      s: Number(item.s) || 0,
+      z: (item.z === 'top' || item.z === 'mid' || item.z === 'bot') ? item.z : undefined
+    };
+    if (item.pnl !== undefined) clean.pnl = Number(item.pnl);
+    if (item.realized !== undefined) clean.realized = Number(item.realized);
+    if (item.buyPrice !== undefined) clean.buyPrice = Number(item.buyPrice);
+    return clean;
+  });
+  
+  return p;
+}
+
+// 모든 포트폴리오 정리
+for (const sym in portfolios) {
+  portfolios[sym] = sanitizePortfolio(portfolios[sym]);
+}
+localStorage.setItem('v11-portfolios', JSON.stringify(portfolios));
+
 // 현재 종목 참조 (매번 portfolios에서 가져옴)
 function curPort() { return portfolios[activeSymbol]; }
 function curParams() { return getActiveParams(curPort()); }
@@ -541,10 +606,17 @@ function renderTickers() {
 
 const td = () => new Date().toISOString().slice(0,10);
 const db = (a,b) => { 
-  const d1=new Date(a), d2=new Date(b); 
-  let days=0, cur=new Date(d1);
-  while(cur<d2) { cur.setDate(cur.getDate()+1); if(cur.getDay()!==0&&cur.getDay()!==6) days++; }
-  return days;
+  try {
+    if (!a || !b) return 0;
+    const d1=new Date(a), d2=new Date(b); 
+    if (isNaN(d1.getTime()) || isNaN(d2.getTime())) return 0;
+    let days=0, cur=new Date(d1);
+    while(cur<d2) { cur.setDate(cur.getDate()+1); if(cur.getDay()!==0&&cur.getDay()!==6) days++; }
+    return days;
+  } catch(e) {
+    console.warn('db() error:', e, 'a=', a, 'b=', b);
+    return 0;
+  }
 };
 
 function getZone() {
@@ -618,8 +690,9 @@ function renderVolCheckBar() {
 function renderStatus() {
   const z = zoneDesc();
   const p = curPort();
-  const uw = p.seed/TU;
-  const ti = p.pos.reduce((a,pp) => a+pp.u, 0);
+  const seedNum = Number(p.seed) || 0;
+  const uw = seedNum/TU;
+  const ti = p.pos.reduce((a,pp) => a+(Number(pp.u)||0), 0);
   const rem = TU - ti;
   
   let volDisplay = '--';
@@ -631,7 +704,7 @@ function renderStatus() {
   }
   
   let h = `
-    <div class="status-row"><span class="k">시드</span><span class="v">$${p.seed.toLocaleString()}</span></div>
+    <div class="status-row"><span class="k">시드</span><span class="v">$${seedNum.toLocaleString()}</span></div>
     <div class="status-row"><span class="k">유닛 단위</span><span class="v">$${uw.toFixed(0)}</span></div>
     <div class="status-row"><span class="k">현재가</span><span class="v">$${p.price||'--'}</span></div>
     <div class="status-row"><span class="k">20일 전고</span><span class="v">$${p.high20||'--'}</span></div>
@@ -664,11 +737,21 @@ function restoreActiveInput() {
 }
 
 function render() {
-  renderTickers();
-  saveActiveInput();
-  renderZones();
-  renderStatus();
-  renderVolCheckBar();
+  try {
+    renderTickers();
+  } catch(e) { console.warn('renderTickers 실패:', e); }
+  try {
+    saveActiveInput();
+  } catch(e) { console.warn('saveActiveInput 실패:', e); }
+  try {
+    renderZones();
+  } catch(e) { console.warn('renderZones 실패:', e); }
+  try {
+    renderStatus();
+  } catch(e) { console.warn('renderStatus 실패:', e); }
+  try {
+    renderVolCheckBar();
+  } catch(e) { console.warn('renderVolCheckBar 실패:', e); }
   
   const body = $('body');
   const p = curPort();
