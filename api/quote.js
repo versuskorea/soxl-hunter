@@ -1,115 +1,86 @@
-// api/quote.js - Vercel Serverless Function
-// SOXL 전일 종가 + 20일 전고점 자동 조회
-// ⭐ v8 수정: 항상 "확정된 전일 종가"만 사용! (장중 가격 X)
-// ⭐ 고가도 종가 기준으로 계산!
+// api/quote.js - Yahoo Finance 최신 종가 + 20일 전고
+// 사용법: GET /api/quote?symbol=SOXL  또는  /api/quote (기본 SOXL)
 
 export default async function handler(req, res) {
-  // CORS
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+  // ✅ symbol 파라미터 받기 (없으면 SOXL 기본)
+  const symbol = ((req.query.symbol || 'SOXL') + '').toUpperCase().trim();
   
   try {
-    // Yahoo Finance에서 2개월 일봉
-    const url = 'https://query1.finance.yahoo.com/v8/finance/chart/SOXL?range=2mo&interval=1d';
-    const response = await fetch(url, {
+    // 최근 40거래일치 가져오기 (20일 전고 + 여유분)
+    const now = Math.floor(Date.now() / 1000);
+    const sixtyDaysAgo = now - 60 * 86400;
+    
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?period1=${sixtyDaysAgo}&period2=${now}&interval=1d&includePrePost=false`;
+    
+    const yahooRes = await fetch(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'application/json'
       }
     });
     
-    if (!response.ok) {
-      throw new Error('Yahoo fetch failed: ' + response.status);
+    if (!yahooRes.ok) {
+      return res.status(502).json({ error: `Yahoo API ${yahooRes.status}` });
     }
     
-    const data = await response.json();
+    const data = await yahooRes.json();
     
-    if (!data.chart || !data.chart.result || !data.chart.result[0]) {
-      throw new Error('Invalid data format');
+    if (data?.chart?.error) {
+      return res.status(502).json({ error: data.chart.error.description || `${symbol} 종목 없음` });
     }
     
-    const result = data.chart.result[0];
-    const meta = result.meta;
-    const timestamps = result.timestamp;
-    const quotes = result.indicators.quote[0];
-    const closes = quotes.close;
+    const result = data?.chart?.result?.[0];
+    if (!result) {
+      return res.status(404).json({ error: `${symbol} 데이터 없음` });
+    }
     
-    // ⭐⭐⭐ v8 핵심 수정 ⭐⭐⭐
-    // 마지막 캔들이 오늘(장중)이면 제외!
-    // 항상 "확정된 종가"만 사용!
+    const timestamps = result.timestamp || [];
+    const quote = result.indicators?.quote?.[0] || {};
+    const highs = quote.high || [];
+    const closes = quote.close || [];
+    const meta = result.meta || {};
     
-    // 1. null 제외하고 유효한 (timestamp, close) 쌍만 추출
-    const validData = [];
+    // 유효한 날짜만 추출 (null 제외)
+    const validBars = [];
     for (let i = 0; i < timestamps.length; i++) {
-      if (closes[i] !== null && closes[i] !== undefined) {
-        validData.push({
-          ts: timestamps[i],
-          close: closes[i],
-          date: new Date(timestamps[i] * 1000).toISOString().slice(0, 10)
-        });
-      }
+      if (closes[i] == null || highs[i] == null) continue;
+      validBars.push({
+        ts: timestamps[i],
+        high: highs[i],
+        close: closes[i]
+      });
     }
     
-    // 2. 오늘 날짜 캔들 감지 및 제거 (장중이면 확정 X!)
-    const todayUTC = new Date().toISOString().slice(0, 10);
-    const marketState = meta.marketState; // REGULAR, PRE, POST, CLOSED
-    
-    // 장이 열려있거나 후장이면 오늘 캔들 제거
-    // (장 마감 후 CLOSED 상태면 오늘 종가도 확정!)
-    const isMarketOpen = marketState === 'REGULAR' || marketState === 'PRE';
-    
-    let confirmedData = validData;
-    if (isMarketOpen && validData.length > 0) {
-      const lastDate = validData[validData.length - 1].date;
-      if (lastDate === todayUTC) {
-        // 오늘 장중이면 제거!
-        confirmedData = validData.slice(0, -1);
-      }
+    if (validBars.length === 0) {
+      return res.status(404).json({ error: `${symbol} 거래 데이터 없음` });
     }
     
-    if (confirmedData.length === 0) {
-      throw new Error('No confirmed close data');
-    }
+    // 최신 확정 종가 = 가장 마지막 bar
+    const latest = validBars[validBars.length - 1];
+    const latestDate = new Date(latest.ts * 1000).toISOString().slice(0, 10);
+    const latestClose = +latest.close.toFixed(2);
     
-    // 3. 확정된 마지막 종가 (어제 종가)
-    const lastClose = confirmedData[confirmedData.length - 1].close;
-    const lastDate = confirmedData[confirmedData.length - 1].date;
+    // 20일 전고 = 최근 20 거래일의 high 최댓값 (최신 포함)
+    const last20 = validBars.slice(-20);
+    const high20 = +Math.max(...last20.map(b => b.high)).toFixed(2);
     
-    // 4. ⭐ 20일 전고점도 "종가" 기준!
-    // (intraday 고가가 아니라 확정 종가 중 최고!)
-    const last20Closes = confirmedData.slice(-20).map(d => d.close);
-    const high20 = Math.max(...last20Closes);
+    // 시장 상태 (야후 meta에서)
+    const marketState = meta.marketState || 'UNKNOWN';
     
-    // 낙폭
-    const drawdown = ((lastClose - high20) / high20 * 100).toFixed(2);
-    
-    // 구간 판정
-    let zone;
-    if (drawdown >= -10) zone = 'top';
-    else if (drawdown <= -15) zone = 'bot';
-    else zone = 'mid';
+    // 캐시 5분 (너무 자주 Yahoo 때리지 말라고)
+    res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
     
     return res.status(200).json({
-      symbol: 'SOXL',
-      price: parseFloat(lastClose.toFixed(2)),
-      high20: parseFloat(high20.toFixed(2)),
-      drawdown: parseFloat(drawdown),
-      zone: zone,
-      lastDate: lastDate,
+      symbol: symbol,
+      price: latestClose,
+      high20: high20,
+      lastDate: latestDate,
       marketState: marketState,
-      marketOpen: isMarketOpen,
-      dataPoints: confirmedData.length,
-      note: '확정 종가만 사용 (장중 제외) · 고가도 종가 기준',
-      timestamp: new Date().toISOString()
+      barCount: validBars.length
     });
     
-  } catch (error) {
-    return res.status(500).json({
-      error: error.message,
-      hint: '야후 API 호출 실패. 수동 입력 필요.'
-    });
+  } catch (err) {
+    console.error('quote.js error:', err);
+    return res.status(500).json({ error: err.message || '서버 오류' });
   }
 }
