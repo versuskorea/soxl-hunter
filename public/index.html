@@ -15,8 +15,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .hdr h1{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:4px;color:#fff}
 .hdr h1 span{color:var(--accent)}
 .hdr .stats{font-family:'JetBrains Mono',monospace;font-size:10px;margin-top:6px;color:var(--green);letter-spacing:1px;font-weight:700}
+.hdr .nav-links{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin-top:8px}
 
-.nav-link{display:inline-block;background:var(--card2);color:var(--accent);padding:6px 12px;border-radius:8px;text-decoration:none;font-size:11px;font-weight:700;margin-top:8px;border:1px solid var(--border)}
+.nav-link{display:inline-block;background:var(--card2);color:var(--accent);padding:6px 12px;border-radius:8px;text-decoration:none;font-size:11px;font-weight:700;border:1px solid var(--border)}
+.nav-link.live{background:linear-gradient(135deg,#22c55e22,#3b82f622);color:var(--green);border-color:var(--green)}
 
 .zone-bar{display:flex;gap:6px;margin-bottom:14px}
 .zone-box{flex:1;padding:14px 8px;border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-align:center;border:2px solid var(--border);background:var(--card);color:var(--dim);letter-spacing:1px}
@@ -58,6 +60,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 .btn-fetch{background:#1a1a2a;color:var(--accent);border:1px solid var(--accent);font-size:12px;padding:10px}
 .btn-bt{background:linear-gradient(135deg,#f97316,#ef4444);color:#fff;text-decoration:none;display:block;text-align:center}
 .btn-multi{background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;text-decoration:none;display:block;text-align:center;margin-top:8px}
+.btn-live{background:linear-gradient(135deg,#22c55e,#3b82f6);color:#fff;text-decoration:none;display:block;text-align:center;margin-top:8px}
 
 .loc-box{background:var(--card2);border-radius:var(--radius);padding:16px;margin-bottom:12px;border:1px solid var(--border)}
 .loc-title{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px}
@@ -110,7 +113,10 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 <div class="hdr">
   <h1>SOXL <span>HUNTER</span></h1>
   <div class="stats">3구간 자동전환 · CAGR +102% · MDD -51% · 137배</div>
-  <a href="/v11.html" class="nav-link">🔗 멀티 종목 버전으로 →</a>
+  <div class="nav-links">
+    <a href="/v11.html" class="nav-link">🔗 v11 멀티</a>
+    <a href="/hunter.html" class="nav-link live">🎯 LIVE (DB)</a>
+  </div>
 </div>
 
 <div class="zone-bar" id="zone-bar">
@@ -145,6 +151,7 @@ body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min
 
 <div id="body"></div>
 
+<a href="/hunter.html" class="btn btn-live">🎯 LIVE 대시보드 (DB 연동 · API)</a>
 <a href="/bt.html" class="btn btn-bt">📊 백테스트 페이지로!</a>
 <a href="/v11.html" class="btn btn-multi">🌐 멀티 종목 HUNTER v11</a>
 
