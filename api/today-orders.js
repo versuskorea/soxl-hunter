@@ -13,11 +13,9 @@ const hunter = require('./_lib/hunter');
 const db = require('./_lib/db');
 
 // 야후 파이낸스 quote 조회 (기존 quote.js 로직 재사용 or 직접 호출)
-async function fetchMarketData(symbol = 'SOXL', vercelBase = '') {
-  // Vercel 내부에서 같은 프로젝트 API 호출
-  const base = vercelBase || process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : 'http://localhost:3000';
+async function fetchMarketData(symbol = 'SOXL') {
+  // Production 도메인 직접 호출 (Vercel Preview Protection 회피)
+  const base = 'https://soxl-hunter.vercel.app';
   const url = `${base}/api/quote?symbol=${symbol}`;
   const res = await fetch(url);
   if (!res.ok) {
