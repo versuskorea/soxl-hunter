@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>POET SWING · Backtest</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08080a;--card:#111118;--card2:#1a1a1f;--border:#222233;
+  --accent:#f59e0b;--green:#22c55e;--red:#ef4444;--blue:#3b82f6;
+  --text:#f0f0f0;--dim:#666;--radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;padding:12px;max-width:720px;margin:0 auto}
+
+.hdr{text-align:center;padding:16px 0 14px}
+.hdr h1{font-family:‘Bebas Neue’,sans-serif;font-size:32px;letter-spacing:4px;color:#fff}
+.hdr h1 span{color:var(–accent)}
+.hdr .sub{font-family:‘JetBrains Mono’,monospace;font-size:10px;margin-top:6px;color:var(–accent);letter-spacing:1.5px;font-weight:700}
+.hdr .nav{margin-top:10px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap}
+.nav-link{background:var(–card2);color:var(–accent);padding:5px 10px;border-radius:6px;text-decoration:none;font-size:10px;font-weight:700;border:1px solid var(–border);letter-spacing:0.5px}
+
+.card{background:var(–card);border:1px solid var(–border);border-radius:var(–radius);padding:16px;margin-bottom:12px}
+.ct{font-family:‘JetBrains Mono’,monospace;font-size:10px;color:#666;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;font-weight:700}
+
+.param-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.param{background:#0a0a0f;border:1px solid var(–border);border-radius:8px;padding:10px}
+.param label{display:block;font-size:10px;color:var(–dim);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.param input{width:100%;background:transparent;border:none;color:var(–text);font-family:‘JetBrains Mono’,monospace;font-size:15px;font-weight:700;outline:none}
+.param .help{font-size:9px;color:#444;margin-top:2px;font-family:‘JetBrains Mono’,monospace}
+
+.preset-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.preset{flex:1;background:var(–card2);color:var(–dim);border:1px solid var(–border);padding:8px;border-radius:8px;font-size:10px;font-weight:700;cursor:pointer;font-family:‘DM Sans’,sans-serif;letter-spacing:1px;min-width:60px}
+.preset.active{background:var(–accent);color:#000}
+.preset:hover{border-color:var(–accent)}
+
+.btn{width:100%;padding:14px;border:none;border-radius:12px;font-family:‘DM Sans’,sans-serif;font-size:14px;font-weight:800;cursor:pointer;color:#000;background:linear-gradient(135deg,var(–accent),var(–red));letter-spacing:1px}
+.btn:disabled{opacity:0.5;cursor:wait}
+.btn:active{transform:scale(0.98)}
+
+.loader-wrap{text-align:center;padding:40px 20px;color:var(–dim);font-family:‘JetBrains Mono’,monospace;font-size:12px;letter-spacing:1.5px}
+.loader{display:inline-block;width:14px;height:14px;margin-right:10px;border:2px solid var(–border);border-top-color:var(–accent);border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.error{background:#1a0a0a;border:1px solid var(–red);border-radius:12px;padding:14px;color:var(–red);font-weight:600;margin-bottom:12px}
+
+.result-hero{background:linear-gradient(135deg,#0a0a0f,var(–card));border:2px solid var(–accent);border-radius:var(–radius);padding:20px;margin-bottom:12px;text-align:center}
+.result-hero .label{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–dim);letter-spacing:2px;margin-bottom:8px}
+.result-hero .big{font-family:‘Bebas Neue’,sans-serif;font-size:42px;color:var(–accent);letter-spacing:2px}
+.result-hero .sub{font-family:‘JetBrains Mono’,monospace;font-size:12px;color:var(–green);margin-top:4px;font-weight:700}
+
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.comp-box{background:var(–card);border:1px solid var(–border);border-radius:12px;padding:14px}
+.comp-box.strategy{border-color:var(–accent)}
+.comp-box.buyhold{border-color:var(–blue)}
+.comp-box .title{font-family:‘JetBrains Mono’,monospace;font-size:10px;color:var(–dim);letter-spacing:2px;margin-bottom:8px;font-weight:700}
+.comp-box .title.accent{color:var(–accent)}
+.comp-box .title.blue{color:var(–blue)}
+.comp-box .val{font-family:‘JetBrains Mono’,monospace;font-size:18px;font-weight:800;margin-bottom:4px}
+.comp-box .delta{font-family:‘JetBrains Mono’,monospace;font-size:11px;color:var(–green);font-weight:700}
+.comp-box .delta.dn{color:var(–red)}
+
+.sg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px}
+.sb{background:var(–card2);border:1px solid var(–border);border-radius:10px;padding:10px 6px;text-align:center}
+.sb .v{font-family:‘JetBrains Mono’,monospace;font-size:14px;font-weight:800}
+.sb .l{font-size:9px;color:var(–dim);margin-top:3px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+
+.trade-log{max-height:400px;overflow-y:auto;background:#0a0a0f;border-radius:10px;padding:10px;margin-top:8px}
+.trade-log::-webkit-scrollbar{width:6px}
+.trade-log::-webkit-scrollbar-track{background:var(–card)}
+.trade-log::-webkit-scrollbar-thumb{background:var(–border)}
+.trade{padding:8px;border-bottom:1px solid var(–border);font-family:‘JetBrains Mono’,monospace;font-size:11px;display:flex;justify-content:space-between;align-items:center}
+.trade:last-child{border-bottom:none}
+.trade .date{color:var(–dim);width:90px}
+.trade .action{padding:2px 6px;border-radius:4px;font-size:9px;font-weight:800;width:60px;text-align:center}
+.trade .action.buy{background:rgba(34,197,94,0.15);color:var(–green)}
+.trade .action.sell{background:rgba(239,68,68,0.15);color:var(–red)}
+.trade .info{flex:1;padding:0 8px;color:var(–text)}
+.trade .rsi{color:var(–accent);width:40px;text-align:right}
+
+.yearly-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(80px,1fr));gap:6px;margin-top:8px}
+.year-box{background:var(–card2);border:1px solid var(–border);border-radius:8px;padding:8px 4px;text-align:center}
+.year-box .y{font-family:‘JetBrains Mono’,monospace;font-size:10px;color:var(–dim);font-weight:700}
+.year-box .pct{font-family:‘JetBrains Mono’,monospace;font-size:13px;font-weight:800;margin-top:3px}
+
+.explanation{background:var(–card2);border-radius:10px;padding:12px;margin-top:10px;font-size:11px;color:var(–dim);line-height:1.6}
+.explanation b{color:var(–accent)}
+.explanation ul{margin:8px 0;padding-left:18px}
+.explanation li{margin:3px 0}
+
+.footer{text-align:center;font-family:‘JetBrains Mono’,monospace;font-size:10px;color:#333;margin:16px 0;letter-spacing:1px}
+
+/* Mini chart */
+.chart-container{background:#0a0a0f;border-radius:10px;padding:10px;margin-top:8px;position:relative;height:120px}
+.chart-svg{width:100%;height:100%}
+</style>
+
+</head>
+<body>
+
+<div class="hdr">
+  <h1>POET <span>SWING</span></h1>
+  <div class="sub">RSI BASED SHARE ACCUMULATION · BACKTEST</div>
+  <div class="nav">
+    <a href="/" class="nav-link">← SOXL HOME</a>
+    <a href="/hunter.html" class="nav-link">HUNTER LIVE</a>
+    <a href="/bt.html" class="nav-link">SOXL BT</a>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ct">🎯 전략 파라미터</div>
+
+  <div class="preset-row">
+    <button class="preset active" onclick="applyPreset('balanced')">균형</button>
+    <button class="preset" onclick="applyPreset('aggressive')">공격</button>
+    <button class="preset" onclick="applyPreset('conservative')">보수</button>
+    <button class="preset" onclick="applyPreset('extreme')">극단</button>
+  </div>
+
+  <div class="param-grid">
+    <div class="param">
+      <label>시드 ($)</label>
+      <input type="number" id="seed" value="20000">
+      <div class="help">초기 자본금</div>
+    </div>
+    <div class="param">
+      <label>초기 진입 (%)</label>
+      <input type="number" id="initEntry" value="50" min="0" max="100">
+      <div class="help">시작 시 매수 비중</div>
+    </div>
+
+```
+<div class="param">
+  <label>RSI 기간</label>
+  <input type="number" id="rsiPeriod" value="14">
+  <div class="help">보통 14일</div>
+</div>
+<div class="param">
+  <label>시작 날짜</label>
+  <input type="text" id="startDate" value="2023-01-01">
+  <div class="help">YYYY-MM-DD</div>
+</div>
+
+<div class="param">
+  <label>RSI 매도1 (%)</label>
+  <input type="number" id="sellRsi1" value="70" min="50" max="95">
+  <div class="help">보유의 <span id="sellPct1Disp">20</span>% 매도</div>
+</div>
+<div class="param">
+  <label>매도1 비중 (%)</label>
+  <input type="number" id="sellPct1" value="20" min="5" max="50" oninput="document.getElementById('sellPct1Disp').textContent=this.value">
+  <div class="help">첫 매도 비중</div>
+</div>
+
+<div class="param">
+  <label>RSI 매도2 (%)</label>
+  <input type="number" id="sellRsi2" value="85" min="70" max="99">
+  <div class="help">보유의 <span id="sellPct2Disp">30</span>% 추가 매도</div>
+</div>
+<div class="param">
+  <label>매도2 비중 (%)</label>
+  <input type="number" id="sellPct2" value="30" min="10" max="70" oninput="document.getElementById('sellPct2Disp').textContent=this.value">
+  <div class="help">2차 매도 비중</div>
+</div>
+
+<div class="param">
+  <label>RSI 매수1 (%)</label>
+  <input type="number" id="buyRsi1" value="30" min="15" max="45">
+  <div class="help">현금의 <span id="buyPct1Disp">30</span>% 매수</div>
+</div>
+<div class="param">
+  <label>매수1 비중 (%)</label>
+  <input type="number" id="buyPct1" value="30" min="10" max="60" oninput="document.getElementById('buyPct1Disp').textContent=this.value">
+  <div class="help">첫 매수 비중</div>
+</div>
+
+<div class="param">
+  <label>RSI 매수2 (%)</label>
+  <input type="number" id="buyRsi2" value="20" min="5" max="30">
+  <div class="help">현금의 <span id="buyPct2Disp">50</span>% 매수</div>
+</div>
+<div class="param">
+  <label>매수2 비중 (%)</label>
+  <input type="number" id="buyPct2" value="50" min="20" max="90" oninput="document.getElementById('buyPct2Disp').textContent=this.value">
+  <div class="help">2차 매수 (적극)</div>
+</div>
+
+<div class="param">
+  <label>최소 거래 간격 (일)</label>
+  <input type="number" id="cooldown" value="3" min="0" max="30">
+  <div class="help">연속 매매 방지</div>
+</div>
+<div class="param">
+  <label>종목</label>
+  <input type="text" id="symbol" value="POET">
+  <div class="help">티커 (POET/LCID 등)</div>
+</div>
+```
+
+  </div>
+
+<button class="btn" onclick="runBacktest()">🚀 백테스트 실행</button>
+
+</div>
+
+<div id="result"></div>
+
+<div class="footer">POET SWING · RSI Accumulation · v1</div>
+
+<script>
+const PRESETS = {
+  balanced: { sellRsi1: 70, sellPct1: 20, sellRsi2: 85, sellPct2: 30, buyRsi1: 30, buyPct1: 30, buyRsi2: 20, buyPct2: 50, initEntry: 50, cooldown: 3 },
+  aggressive: { sellRsi1: 65, sellPct1: 25, sellRsi2: 80, sellPct2: 40, buyRsi1: 35, buyPct1: 35, buyRsi2: 25, buyPct2: 60, initEntry: 40, cooldown: 2 },
+  conservative: { sellRsi1: 75, sellPct1: 15, sellRsi2: 90, sellPct2: 25, buyRsi1: 25, buyPct1: 25, buyRsi2: 15, buyPct2: 40, initEntry: 60, cooldown: 5 },
+  extreme: { sellRsi1: 80, sellPct1: 30, sellRsi2: 95, sellPct2: 50, buyRsi1: 25, buyPct1: 40, buyRsi2: 15, buyPct2: 70, initEntry: 30, cooldown: 2 }
+};
+
+function applyPreset(name) {
+  const p = PRESETS[name];
+  document.querySelectorAll('.preset').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  Object.keys(p).forEach(k => {
+    const el = document.getElementById(k);
+    if (el) {
+      el.value = p[k];
+      if (k.startsWith('sellPct') || k.startsWith('buyPct')) {
+        const disp = document.getElementById(k + 'Disp');
+        if (disp) disp.textContent = p[k];
+      }
+    }
+  });
+}
+
+// Wilder's RSI 계산
+function calculateRSI(prices, period = 14) {
+  if (prices.length < period + 1) return [];
+  const rsi = new Array(period).fill(null);
+  
+  let gains = 0, losses = 0;
+  for (let i = 1; i <= period; i++) {
+    const d = prices[i] - prices[i-1];
+    if (d > 0) gains += d;
+    else losses -= d;
+  }
+  let avgGain = gains / period;
+  let avgLoss = losses / period;
+  
+  rsi.push(avgLoss === 0 ? 100 : 100 - (100 / (1 + avgGain / avgLoss)));
+  
+  for (let i = period + 1; i < prices.length; i++) {
+    const d = prices[i] - prices[i-1];
+    const gain = d > 0 ? d : 0;
+    const loss = d < 0 ? -d : 0;
+    avgGain = (avgGain * (period - 1) + gain) / period;
+    avgLoss = (avgLoss * (period - 1) + loss) / period;
+    rsi.push(avgLoss === 0 ? 100 : 100 - (100 / (1 + avgGain / avgLoss)));
+  }
+  return rsi;
+}
+
+async function fetchData(symbol, startDate) {
+  const startTs = Math.floor(new Date(startDate).getTime() / 1000);
+  const endTs = Math.floor(Date.now() / 1000);
+  // 기존 quote.js 확장 없이, Yahoo Finance의 query1.finance 엔드포인트 직접 호출은 CORS 막힘
+  // 대신 동일 프로젝트의 quote.js 프록시 사용
+  // quote.js는 기간 설정이 없으니 일단 자체 구현 시도
+  
+  // 시도 1: 야후 공용 엔드포인트 (일부 지역에서 CORS 허용)
+  const url = `https://query1.finance.yahoo.com/v8/finance/chart/${symbol}?period1=${startTs}&period2=${endTs}&interval=1d`;
+  
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+    const result = data.chart?.result?.[0];
+    if (!result) throw new Error('데이터 없음');
+    
+    const timestamps = result.timestamp;
+    const quotes = result.indicators.quote[0];
+    
+    const bars = [];
+    for (let i = 0; i < timestamps.length; i++) {
+      const close = quotes.close[i];
+      if (close == null) continue;
+      bars.push({
+        date: new Date(timestamps[i] * 1000).toISOString().slice(0, 10),
+        open: quotes.open[i],
+        high: quotes.high[i],
+        low: quotes.low[i],
+        close: close,
+        volume: quotes.volume[i] || 0
+      });
+    }
+    return bars;
+  } catch (err) {
+    throw new Error(`야후 직접 호출 실패 (CORS 가능성): ${err.message}`);
+  }
+}
+
+let lastBacktestResult = null;
+
+async function runBacktest() {
+  const btn = document.querySelector('.btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ 실행 중...';
+  
+  const resultDiv = document.getElementById('result');
+  resultDiv.innerHTML = '<div class="loader-wrap"><span class="loader"></span>POET 데이터 조회 중...</div>';
+  
+  const params = {
+    symbol: document.getElementById('symbol').value.toUpperCase(),
+    startDate: document.getElementById('startDate').value,
+    seed: parseFloat(document.getElementById('seed').value),
+    initEntry: parseFloat(document.getElementById('initEntry').value) / 100,
+    rsiPeriod: parseInt(document.getElementById('rsiPeriod').value),
+    sellRsi1: parseFloat(document.getElementById('sellRsi1').value),
+    sellPct1: parseFloat(document.getElementById('sellPct1').value) / 100,
+    sellRsi2: parseFloat(document.getElementById('sellRsi2').value),
+    sellPct2: parseFloat(document.getElementById('sellPct2').value) / 100,
+    buyRsi1: parseFloat(document.getElementById('buyRsi1').value),
+    buyPct1: parseFloat(document.getElementById('buyPct1').value) / 100,
+    buyRsi2: parseFloat(document.getElementById('buyRsi2').value),
+    buyPct2: parseFloat(document.getElementById('buyPct2').value) / 100,
+    cooldown: parseInt(document.getElementById('cooldown').value)
+  };
+  
+  try {
+    const bars = await fetchData(params.symbol, params.startDate);
+    if (bars.length < params.rsiPeriod + 5) {
+      throw new Error(`데이터 부족 (${bars.length}일)`);
+    }
+    
+    resultDiv.innerHTML = '<div class="loader-wrap"><span class="loader"></span>백테스트 실행 중...</div>';
+    await new Promise(r => setTimeout(r, 50));
+    
+    const result = backtest(bars, params);
+    lastBacktestResult = result;
+    render(result, params);
+  } catch (err) {
+    resultDiv.innerHTML = `<div class="error">❌ ${err.message}<br><br>
+      <small>야후 API CORS 이슈라면 브라우저 콘솔 확인. 또는 CORS 프록시가 필요할 수 있습니다.</small>
+    </div>`;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = '🚀 백테스트 실행';
+  }
+}
+
+function backtest(bars, p) {
+  const closes = bars.map(b => b.close);
+  const rsi = calculateRSI(closes, p.rsiPeriod);
+  
+  // 시작점: RSI 계산 끝난 후부터
+  const startIdx = p.rsiPeriod;
+  
+  // 초기 진입
+  const firstPrice = bars[startIdx].close;
+  let cash = p.seed * (1 - p.initEntry);
+  let shares = Math.floor((p.seed * p.initEntry) / firstPrice);
+  cash += p.seed * p.initEntry - shares * firstPrice;  // 매수 후 잔여
+  
+  const trades = [{
+    date: bars[startIdx].date,
+    action: 'BUY',
+    price: firstPrice,
+    shares: shares,
+    cash: cash,
+    totalValue: cash + shares * firstPrice,
+    rsi: rsi[startIdx] || 50,
+    reason: 'INITIAL_ENTRY'
+  }];
+  
+  let lastTradeIdx = startIdx;
+  const equityCurve = [{ date: bars[startIdx].date, value: cash + shares * firstPrice, shares: shares }];
+  
+  // 메인 루프
+  for (let i = startIdx + 1; i < bars.length; i++) {
+    const price = bars[i].close;
+    const currentRsi = rsi[i];
+    if (currentRsi == null) continue;
+    
+    const daysSinceTrade = i - lastTradeIdx;
+    if (daysSinceTrade < p.cooldown) {
+      equityCurve.push({ date: bars[i].date, value: cash + shares * price, shares });
+      continue;
+    }
+    
+    let traded = false;
+    
+    // ----- 매도 조건 -----
+    if (shares > 0) {
+      if (currentRsi >= p.sellRsi2) {
+        // 매도2: 보유의 (pct2) % 매도
+        const sellQty = Math.floor(shares * p.sellPct2);
+        if (sellQty > 0) {
+          cash += sellQty * price;
+          shares -= sellQty;
+          trades.push({
+            date: bars[i].date, action: 'SELL', price: price, shares: sellQty,
+            cash: cash, totalValue: cash + shares * price, rsi: currentRsi,
+            reason: `RSI>=${p.sellRsi2}`
+          });
+          lastTradeIdx = i;
+          traded = true;
+        }
+      } else if (currentRsi >= p.sellRsi1) {
+        const sellQty = Math.floor(shares * p.sellPct1);
+        if (sellQty > 0) {
+          cash += sellQty * price;
+          shares -= sellQty;
+          trades.push({
+            date: bars[i].date, action: 'SELL', price: price, shares: sellQty,
+            cash: cash, totalValue: cash + shares * price, rsi: currentRsi,
+            reason: `RSI>=${p.sellRsi1}`
+          });
+          lastTradeIdx = i;
+          traded = true;
+        }
+      }
+    }
+    
+    // ----- 매수 조건 -----
+    if (!traded && cash > price) {
+      if (currentRsi <= p.buyRsi2) {
+        const buyBudget = cash * p.buyPct2;
+        const buyQty = Math.floor(buyBudget / price);
+        if (buyQty > 0) {
+          cash -= buyQty * price;
+          shares += buyQty;
+          trades.push({
+            date: bars[i].date, action: 'BUY', price: price, shares: buyQty,
+            cash: cash, totalValue: cash + shares * price, rsi: currentRsi,
+            reason: `RSI<=${p.buyRsi2}`
+          });
+          lastTradeIdx = i;
+        }
+      } else if (currentRsi <= p.buyRsi1) {
+        const buyBudget = cash * p.buyPct1;
+        const buyQty = Math.floor(buyBudget / price);
+        if (buyQty > 0) {
+          cash -= buyQty * price;
+          shares += buyQty;
+          trades.push({
+            date: bars[i].date, action: 'BUY', price: price, shares: buyQty,
+            cash: cash, totalValue: cash + shares * price, rsi: currentRsi,
+            reason: `RSI<=${p.buyRsi1}`
+          });
+          lastTradeIdx = i;
+        }
+      }
+    }
+    
+    equityCurve.push({ date: bars[i].date, value: cash + shares * price, shares });
+  }
+  
+  const lastPrice = closes[closes.length - 1];
+  const finalValue = cash + shares * lastPrice;
+  const initialValue = p.seed;
+  
+  // Buy & Hold 비교
+  const bhShares = Math.floor(p.seed / firstPrice);
+  const bhCash = p.seed - bhShares * firstPrice;
+  const bhFinalValue = bhCash + bhShares * lastPrice;
+  
+  // MDD 계산
+  let maxEquity = equityCurve[0].value;
+  let mdd = 0;
+  equityCurve.forEach(e => {
+    if (e.value > maxEquity) maxEquity = e.value;
+    const dd = (e.value - maxEquity) / maxEquity * 100;
+    if (dd < mdd) mdd = dd;
+  });
+  
+  // 연도별 수익률
+  const yearlyReturns = {};
+  const yearStarts = {};
+  equityCurve.forEach(e => {
+    const y = e.date.slice(0, 4);
+    if (!yearStarts[y]) yearStarts[y] = e.value;
+    yearlyReturns[y] = ((e.value - yearStarts[y]) / yearStarts[y] * 100);
+  });
+  
+  return {
+    startPrice: firstPrice, lastPrice: lastPrice,
+    startDate: bars[startIdx].date, endDate: bars[bars.length-1].date,
+    days: bars.length - startIdx,
+    cash, shares, finalValue, initialValue,
+    totalReturn: (finalValue - initialValue) / initialValue * 100,
+    bhShares, bhFinalValue,
+    bhReturn: (bhFinalValue - initialValue) / initialValue * 100,
+    mdd,
+    trades,
+    buyCount: trades.filter(t => t.action === 'BUY').length,
+    sellCount: trades.filter(t => t.action === 'SELL').length,
+    yearlyReturns,
+    equityCurve
+  };
+}
+
+function render(r, p) {
+  const shareDelta = r.shares - r.bhShares;
+  const valueDelta = r.finalValue - r.bhFinalValue;
+  const sharePct = ((r.shares / r.bhShares) - 1) * 100;
+  
+  let html = '';
+  
+  // Hero: 수량 증가가 메인 메트릭
+  html += `
+    <div class="result-hero">
+      <div class="label">🎯 최종 보유 주식 수</div>
+      <div class="big">${r.shares.toLocaleString()}</div>
+      <div class="sub">vs Buy&Hold ${r.bhShares.toLocaleString()}주 (${shareDelta >= 0 ? '+' : ''}${shareDelta.toLocaleString()}주 · ${sharePct >= 0 ? '+' : ''}${sharePct.toFixed(1)}%)</div>
+    </div>
+  `;
+  
+  // 비교 박스
+  html += `
+    <div class="comparison-grid">
+      <div class="comp-box strategy">
+        <div class="title accent">POET SWING</div>
+        <div class="val">$${Math.round(r.finalValue).toLocaleString()}</div>
+        <div class="delta ${r.totalReturn >= 0 ? '' : 'dn'}">${r.totalReturn >= 0 ? '+' : ''}${r.totalReturn.toFixed(1)}%</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:6px;font-family:'JetBrains Mono',monospace">
+          ${r.shares}주 · 현금 $${Math.round(r.cash).toLocaleString()}
+        </div>
+      </div>
+      <div class="comp-box buyhold">
+        <div class="title blue">BUY &amp; HOLD</div>
+        <div class="val">$${Math.round(r.bhFinalValue).toLocaleString()}</div>
+        <div class="delta ${r.bhReturn >= 0 ? '' : 'dn'}">${r.bhReturn >= 0 ? '+' : ''}${r.bhReturn.toFixed(1)}%</div>
+        <div style="font-size:10px;color:var(--dim);margin-top:6px;font-family:'JetBrains Mono',monospace">
+          ${r.bhShares}주 · 보유만
+        </div>
+      </div>
+    </div>
+  `;
+  
+  // 차이
+  const beat = r.totalReturn - r.bhReturn;
+  html += `
+    <div class="card" style="text-align:center;border-color:${beat >= 0 ? 'var(--green)' : 'var(--red)'}">
+      <div class="ct">📊 성과 차이</div>
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:${beat >= 0 ? 'var(--green)' : 'var(--red)'};letter-spacing:2px">
+        ${beat >= 0 ? '+' : ''}${beat.toFixed(2)}%p
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);margin-top:4px">
+        ${beat >= 0 ? 'POET SWING이 Buy&Hold를 초과' : 'Buy&Hold가 POET SWING보다 우수'}
+      </div>
+    </div>
+  `;
+  
+  // 핵심 지표
+  html += `
+    <div class="sg">
+      <div class="sb"><div class="v">${r.buyCount}</div><div class="l">매수</div></div>
+      <div class="sb"><div class="v">${r.sellCount}</div><div class="l">매도</div></div>
+      <div class="sb"><div class="v" style="color:var(--red)">${r.mdd.toFixed(1)}%</div><div class="l">MDD</div></div>
+    </div>
+    <div class="sg">
+      <div class="sb"><div class="v">$${r.startPrice.toFixed(2)}</div><div class="l">시작가</div></div>
+      <div class="sb"><div class="v">$${r.lastPrice.toFixed(2)}</div><div class="l">현재가</div></div>
+      <div class="sb"><div class="v">${r.days}일</div><div class="l">기간</div></div>
+    </div>
+  `;
+  
+  // 연도별
+  const years = Object.keys(r.yearlyReturns).sort();
+  if (years.length > 1) {
+    html += `<div class="card">
+      <div class="ct">📅 연도별 수익률</div>
+      <div class="yearly-grid">`;
+    years.forEach(y => {
+      const pct = r.yearlyReturns[y];
+      const color = pct >= 0 ? 'var(--green)' : 'var(--red)';
+      html += `
+        <div class="year-box">
+          <div class="y">${y}</div>
+          <div class="pct" style="color:${color}">${pct >= 0 ? '+' : ''}${pct.toFixed(0)}%</div>
+        </div>
+      `;
+    });
+    html += `</div></div>`;
+  }
+  
+  // 거래 로그
+  html += `<div class="card">
+    <div class="ct">📝 거래 내역 (${r.trades.length}건)</div>
+    <div class="trade-log">
+  `;
+  r.trades.slice().reverse().forEach(t => {
+    html += `
+      <div class="trade">
+        <span class="date">${t.date}</span>
+        <span class="action ${t.action === 'BUY' ? 'buy' : 'sell'}">${t.action}</span>
+        <span class="info">${t.shares}주 @ $${t.price.toFixed(2)}</span>
+        <span class="rsi">${t.rsi.toFixed(0)}</span>
+      </div>
+    `;
+  });
+  html += `</div></div>`;
+  
+  // 설명
+  html += `
+    <div class="card">
+      <div class="ct">💡 전략 요약</div>
+      <div class="explanation">
+        <b>POET SWING</b>은 RSI 기반 스윙 트레이딩으로 <b>주식 수량을 축적</b>하는 전략입니다.
+        <ul>
+          <li>RSI ≥ ${p.sellRsi1*100/100} → 보유 ${p.sellPct1*100}% 매도 (현금화)</li>
+          <li>RSI ≥ ${p.sellRsi2*100/100} → 추가 ${p.sellPct2*100}% 매도</li>
+          <li>RSI ≤ ${p.buyRsi1*100/100} → 현금 ${p.buyPct1*100}% 매수</li>
+          <li>RSI ≤ ${p.buyRsi2*100/100} → 현금 ${p.buyPct2*100}% 매수 (적극)</li>
+          <li>최소 거래 간격: ${p.cooldown}일</li>
+        </ul>
+        <br>
+        이 시뮬레이션은 실제 POET 종가 데이터 기반입니다. 변동성이 크고 장기 우상향 예상되는 종목일수록 수량 축적 효과가 큽니다.
+      </div>
+    </div>
+  `;
+  
+  document.getElementById('result').innerHTML = html;
+}
+</script>
+
+</body>
+</html>
