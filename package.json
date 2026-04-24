@@ -1,7 +1,10 @@
 {
   "name": "soxl-hunter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
     "build": "echo 'Static site - no build needed'"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0"
   }
 }
