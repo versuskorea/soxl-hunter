@@ -24,7 +24,6 @@ body{
   padding:12px;max-width:520px;margin:0 auto;
 }
 
-/* ===== HEADER ===== */
 .hdr{text-align:center;padding:16px 0 12px;position:relative}
 .hdr h1{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:4px;color:#fff}
 .hdr h1 span{color:var(--accent)}
@@ -33,7 +32,6 @@ body{
 .nav-link{background:var(--card2);color:var(--accent);padding:5px 10px;border-radius:6px;text-decoration:none;font-size:10px;font-weight:700;border:1px solid var(--border);letter-spacing:0.5px}
 .nav-link.active{background:var(--accent);color:#fff}
 
-/* ===== AUTH GATE ===== */
 .auth-gate{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px}
 .auth-gate .title{font-size:12px;color:var(--accent);letter-spacing:2px;font-weight:700;margin-bottom:12px;text-transform:uppercase}
 .auth-gate input{width:100%;background:#0a0a0f;border:2px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;-webkit-appearance:none}
@@ -46,19 +44,20 @@ body{
 .btn:disabled{opacity:0.5;cursor:wait}
 .btn.secondary{background:var(--card2);color:var(--dim);border:1px solid var(--border)}
 .btn.danger{background:#1a0a0a;color:var(--red);border:1px solid var(--red)}
+.btn.success{background:var(--green)}
+.btn.warning{background:var(--amber)}
+.btn-row{display:flex;gap:8px;margin-top:10px}
+.btn-row .btn{margin-top:0;flex:1}
 
-/* ===== LOADER ===== */
 .loader-wrap{text-align:center;padding:60px 20px;color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1.5px}
 .loader{display:inline-block;width:14px;height:14px;margin-right:10px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* ===== ERROR ===== */
 .error-box{background:linear-gradient(135deg,#1a0a0a,#0a0a0a);border:1px solid var(--red);border-radius:12px;padding:16px;color:var(--red);font-weight:600;margin-bottom:12px;font-size:13px;line-height:1.5}
 .error-box .t{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;margin-bottom:8px;opacity:0.8}
 .error-box code{display:block;background:#0a0a0f;padding:8px;border-radius:6px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#fbbf24;word-break:break-all}
 .error-box .hint{margin-top:10px;font-size:12px;font-weight:500;color:#fca5a5;padding-top:10px;border-top:1px solid rgba(239,68,68,0.2)}
 
-/* ===== ZONE BAR ===== */
 .zone-bar{display:flex;gap:6px;margin-bottom:12px}
 .zone-box{flex:1;padding:14px 6px;border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-align:center;border:2px solid var(--border);background:var(--card);color:var(--dim);letter-spacing:1px}
 .zone-box.on{background:linear-gradient(135deg,#0a0a0f,var(--card));box-shadow:0 0 24px rgba(59,130,246,0.25)}
@@ -69,27 +68,26 @@ body{
 .zone-box .rule{font-size:9px;margin-top:3px;opacity:0.7}
 .zone-box.on .pct{font-size:18px}
 
-/* ===== CARDS & STATUS ===== */
 .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px}
 .card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
 .card-h .title{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:700}
 .card-h .count{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800}
+.card-h .action{background:var(--accent);color:#fff;border:none;padding:5px 10px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:0.5px}
 
 .status-card{background:linear-gradient(135deg,#0a0a0f,var(--card));border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px}
 .status-row{display:flex;justify-content:space-between;align-items:center;margin:5px 0}
 .status-row .k{font-size:12px;color:var(--dim)}
 .status-row .v{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800}
+.status-row .edit-btn{font-size:10px;color:var(--accent);cursor:pointer;background:var(--card2);padding:2px 6px;border-radius:4px;margin-left:6px;border:none;font-weight:700}
 .zone-top{color:var(--top)}
 .zone-mid{color:var(--mid)}
 .zone-bot{color:var(--bot)}
 
-/* ===== STATS GRID ===== */
 .sg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
 .sb{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center}
 .sb .v{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:800}
 .sb .l{font-size:9px;color:var(--dim);margin-top:3px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
 
-/* ===== ORDER CARDS ===== */
 .order{border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid var(--border);background:#0a0a0f;position:relative;overflow:hidden}
 .order.buy-always{border-left:3px solid var(--green)}
 .order.buy-down{border-left:3px solid var(--amber)}
@@ -105,27 +103,32 @@ body{
 .order .val .price{color:var(--accent)}
 .order .desc{font-size:11px;color:var(--dim);margin-top:5px;line-height:1.4}
 .order .right{float:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);margin-top:-2px}
+.order .record-btn{background:var(--green);color:#fff;border:none;padding:6px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;margin-top:8px;font-family:'DM Sans',sans-serif;width:100%}
+.order .record-btn:active{transform:scale(0.98)}
 
 .empty{text-align:center;color:#444;padding:16px;font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:1px}
 
-/* ===== POSITIONS LIST ===== */
 .tier-item{background:#0a0a0f;border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:6px;position:relative}
 .tier-item.zone-top{border-left:3px solid var(--top)}
 .tier-item.zone-mid{border-left:3px solid var(--mid)}
 .tier-item.zone-bot{border-left:3px solid var(--bot)}
-.tier-item .top-row{display:flex;justify-content:space-between;align-items:center}
-.tier-item .left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.tier-item .tid{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);font-weight:800;background:var(--card2);padding:2px 6px;border-radius:4px}
+.tier-item .top-row{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.tier-item .left{display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex:1;min-width:0}
+.tier-item .tid{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);font-weight:800;background:var(--card2);padding:2px 6px;border-radius:4px;white-space:nowrap}
 .tier-item .info{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
-.tier-item .pnl{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800}
+.tier-item .pnl{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800;white-space:nowrap}
 .tier-item .pnl.up{color:var(--green)}
 .tier-item .pnl.dn{color:var(--red)}
 .tier-item .meta{font-size:10px;color:var(--dim);margin-top:5px;font-family:'JetBrains Mono',monospace;line-height:1.5}
 .tier-item .meta .tag{display:inline-block;padding:1px 5px;background:var(--card2);border-radius:3px;font-size:9px;margin-right:4px}
 .tier-item.alert{background:rgba(239,68,68,0.04)}
 .tier-item.alert .tid{background:var(--red);color:#fff}
+.tier-item .actions{display:flex;gap:5px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--border)}
+.tier-item .actions button{flex:1;border:none;padding:6px;border-radius:6px;font-size:10px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
+.tier-item .sell-btn{background:var(--amber);color:#fff}
+.tier-item .force-btn{background:#1a0a0a;color:var(--red);border:1px solid var(--red) !important}
+.tier-item .del-btn{background:transparent;color:var(--dim);border:1px solid var(--border) !important}
 
-/* ===== VALIDATION BAR ===== */
 .valbar{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px}
 .valbar .ok{color:var(--green)}
 .valbar .warn{color:var(--amber)}
@@ -134,8 +137,7 @@ body{
 .valbar .unit-dot{flex:1;height:6px;background:var(--card2);border-radius:1px}
 .valbar .unit-dot.filled{background:var(--accent)}
 
-/* ===== REFRESH BAR ===== */
-.refresh-bar{position:sticky;bottom:10px;background:rgba(17,17,24,0.95);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin:14px 0;display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim)}
+.refresh-bar{position:sticky;bottom:10px;background:rgba(17,17,24,0.95);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin:14px 0;display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);z-index:10}
 .refresh-bar .auto{display:flex;align-items:center;gap:8px}
 .refresh-bar .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
@@ -148,11 +150,38 @@ body{
 
 .footer{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#333;margin:16px 0;letter-spacing:1px}
 
-/* Trading disabled banner */
-.banner-stop{background:#1a0a0a;border:1px solid var(--red);border-radius:10px;padding:12px;color:var(--red);font-weight:700;text-align:center;font-size:13px;margin-bottom:10px}
+.banner-stop{background:#1a0a0a;border:1px solid var(--red);border-radius:10px;padding:12px;color:var(--red);font-weight:700;text-align:center;font-size:13px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.banner-stop button{background:var(--red);color:#fff;border:none;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif}
 
-/* Dry run banner */
 .banner-dry{background:rgba(245,158,11,0.08);border:1px solid var(--amber);border-radius:10px;padding:10px;color:var(--amber);font-weight:600;text-align:center;font-size:11px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+
+/* ============ MODAL ============ */
+.modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;backdrop-filter:blur(4px)}
+.modal{background:var(--card);border:1px solid var(--accent);border-radius:16px;padding:20px;max-width:420px;width:100%;max-height:90vh;overflow-y:auto}
+.modal h3{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);margin-bottom:12px}
+.modal .desc{color:var(--dim);font-size:12px;margin-bottom:14px;line-height:1.6}
+.modal .desc b{color:var(--text)}
+
+.form-row{margin-bottom:12px}
+.form-row label{display:block;font-size:11px;color:var(--dim);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.form-row input[type="number"],.form-row input[type="text"],.form-row select{width:100%;background:#0a0a0f;border:2px solid var(--border);border-radius:8px;padding:10px 12px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:700;outline:none;-webkit-appearance:none}
+.form-row input:focus,.form-row select:focus{border-color:var(--accent)}
+.form-row .sub{font-size:10px;color:var(--dim);margin-top:4px;font-family:'JetBrains Mono',monospace}
+
+.radio-group{display:flex;gap:6px}
+.radio-group label{flex:1;background:#0a0a0f;border:2px solid var(--border);border-radius:8px;padding:10px;text-align:center;font-size:12px;font-weight:700;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:1px;text-transform:uppercase;margin:0;color:var(--dim)}
+.radio-group label.selected{border-color:var(--accent);color:var(--accent);background:#0f1320}
+.radio-group input{display:none}
+
+.preview-box{background:#0a0a0f;border:1px dashed var(--border);border-radius:8px;padding:10px;margin:10px 0;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);line-height:1.6}
+.preview-box b{color:var(--green)}
+
+.warning-box{background:rgba(239,68,68,0.08);border:1px solid var(--red);border-radius:8px;padding:10px;margin:10px 0;font-size:11px;color:var(--red);line-height:1.5}
+
+/* ============ TOAST ============ */
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--green);color:var(--green);padding:12px 20px;border-radius:10px;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;z-index:2000;box-shadow:0 4px 20px rgba(0,0,0,0.5);animation:slideIn 0.3s}
+.toast.error{border-color:var(--red);color:var(--red)}
+@keyframes slideIn{from{opacity:0;transform:translateX(-50%) translateY(-20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 </style>
 </head>
 <body>
@@ -168,7 +197,7 @@ body{
   </div>
 </div>
 
-<!-- 인증 화면 (키 없을 때만) -->
+<!-- 인증 화면 -->
 <div id="auth-gate" class="auth-gate" style="display:none">
   <div class="title">🔑 API 인증</div>
   <input type="password" id="secret-input" placeholder="HUNTER_API_SECRET 붙여넣기" autocomplete="off">
@@ -182,32 +211,38 @@ body{
 <!-- 결과 화면 -->
 <div id="result"></div>
 
-<!-- 새로고침 바 (항상 하단 고정) -->
+<!-- 새로고침 바 -->
 <div id="refresh-bar" class="refresh-bar" style="display:none">
   <div class="auto">
     <span class="dot"></span>
     <span id="last-updated">--</span>
   </div>
   <div>
-    <button onclick="fetchAll(true)">🔄 새로고침</button>
-    <button class="btn danger" style="background:transparent;width:auto;padding:6px 10px;margin:0 0 0 6px;font-size:11px" onclick="clearSecret()">🗑️</button>
+    <button onclick="fetchAll(true)">🔄</button>
+    <button style="background:var(--card2);margin-left:4px;color:var(--dim)" onclick="clearSecret()">🗑️</button>
   </div>
 </div>
 
 <div class="footer">HUNTER v8 · SOXL · API-Powered</div>
 
+<!-- Modal Container -->
+<div id="modal-container"></div>
+<div id="toast-container"></div>
+
 <script>
 const API_BASE = 'https://soxl-hunter.vercel.app';
 const STORAGE_KEY = 'hunter-api-secret-v2';
-const AUTO_REFRESH_MS = 60000; // 60초 자동 갱신
+const AUTO_REFRESH_MS = 60000;
 
 let autoRefreshTimer = null;
 let lastData = null;
+let currentSecret = null;
 
 // ========== 초기화 ==========
 window.addEventListener('DOMContentLoaded', () => {
   const saved = localStorage.getItem(STORAGE_KEY);
   if (saved) {
+    currentSecret = saved;
     fetchAll();
   } else {
     document.getElementById('auth-gate').style.display = 'block';
@@ -226,6 +261,7 @@ function saveAndFetch() {
     return;
   }
   localStorage.setItem(STORAGE_KEY, secret);
+  currentSecret = secret;
   document.getElementById('auth-gate').style.display = 'none';
   fetchAll();
 }
@@ -237,10 +273,27 @@ function clearSecret() {
   location.reload();
 }
 
-// ========== API 호출 ==========
+// ========== API 유틸 ==========
+async function apiCall(path, method = 'GET', body = null) {
+  const opts = {
+    method,
+    headers: {
+      'Authorization': 'Bearer ' + currentSecret,
+      'Content-Type': 'application/json'
+    }
+  };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(API_BASE + path, opts);
+  const data = await res.json();
+  if (!res.ok || data.error) {
+    throw new Error(data.detail || data.error || `HTTP ${res.status}`);
+  }
+  return data;
+}
+
+// ========== 데이터 로드 ==========
 async function fetchAll(manualRefresh = false) {
-  const secret = localStorage.getItem(STORAGE_KEY);
-  if (!secret) {
+  if (!currentSecret) {
     document.getElementById('auth-gate').style.display = 'block';
     return;
   }
@@ -251,46 +304,16 @@ async function fetchAll(manualRefresh = false) {
   }
 
   try {
-    // today-orders와 positions 병렬 호출
-    const [ordersRes, positionsRes] = await Promise.all([
-      fetch(API_BASE + '/api/today-orders', {
-        method: 'POST',
-        headers: {
-          'Authorization': 'Bearer ' + secret,
-          'Content-Type': 'application/json'
-        }
-      }),
-      fetch(API_BASE + '/api/positions?all=true', {
-        method: 'GET',
-        headers: {
-          'Authorization': 'Bearer ' + secret,
-          'Content-Type': 'application/json'
-        }
-      })
+    const [orders, positions] = await Promise.all([
+      apiCall('/api/today-orders', 'POST'),
+      apiCall('/api/positions?all=true', 'GET')
     ]);
 
-    const ordersData = await ordersRes.json();
-    const positionsData = await positionsRes.json();
-
-    if (!ordersRes.ok || ordersData.error) {
-      showError(ordersRes.status, ordersData, 'today-orders');
-      return;
-    }
-    if (!positionsRes.ok || positionsData.error) {
-      showError(positionsRes.status, positionsData, 'positions');
-      return;
-    }
-
-    lastData = { orders: ordersData, positions: positionsData };
+    lastData = { orders, positions };
     render(lastData);
     startAutoRefresh();
   } catch (err) {
-    document.getElementById('result').innerHTML = `
-      <div class="error-box">
-        <div class="t">NETWORK ERROR</div>
-        ${err.message}
-      </div>
-    `;
+    showApiError(err);
   }
 }
 
@@ -299,27 +322,353 @@ function startAutoRefresh() {
   autoRefreshTimer = setInterval(() => fetchAll(false), AUTO_REFRESH_MS);
 }
 
-// ========== 에러 표시 ==========
-function showError(status, data, api) {
-  const result = document.getElementById('result');
+function showApiError(err) {
+  const msg = err.message || 'Unknown error';
   let hint = '';
+  if (msg.includes('Unauthorized')) hint = 'API Secret이 틀렸습니다. 🗑️ 삭제 후 재입력.';
+  else if (msg.includes('Invalid API key')) hint = 'Supabase 키 이슈. 관리자 확인 필요.';
+  else if (msg.includes('fetchMarketData')) hint = '주가 조회 실패. 주말/공휴일 또는 야후 이슈.';
 
-  if (status === 401) {
-    hint = 'API Secret이 틀렸습니다. 🗑️ 버튼으로 삭제 후 재입력.';
-  } else if (data.detail?.includes('Invalid API key')) {
-    hint = 'Supabase 키 이슈. Vercel 환경변수 확인 필요.';
-  } else if (data.detail?.includes('fetchMarketData')) {
-    hint = '주가 조회 실패. 주말이거나 야후 API 이슈.';
-  }
-
-  result.innerHTML = `
+  document.getElementById('result').innerHTML = `
     <div class="error-box">
-      <div class="t">HTTP ${status} · ${api} · ${data.error || 'UNKNOWN'}</div>
-      ${data.detail ? `<code>${data.detail}</code>` : ''}
+      <div class="t">ERROR</div>
+      ${msg}
       ${hint ? `<div class="hint">${hint}</div>` : ''}
       <button class="btn danger" style="margin-top:12px" onclick="fetchAll(true)">🔄 재시도</button>
     </div>
   `;
+}
+
+// ========== 토스트 ==========
+function toast(msg, isError = false) {
+  const container = document.getElementById('toast-container');
+  const el = document.createElement('div');
+  el.className = 'toast' + (isError ? ' error' : '');
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 3000);
+}
+
+// ========== 모달 ==========
+function showModal(html) {
+  document.getElementById('modal-container').innerHTML = `
+    <div class="modal-bg" onclick="if(event.target===this)closeModal()">
+      <div class="modal">${html}</div>
+    </div>
+  `;
+}
+function closeModal() {
+  document.getElementById('modal-container').innerHTML = '';
+}
+
+// ========== 시드 변경 모달 ==========
+function openSeedModal() {
+  const currentSeed = lastData?.orders?.validation?.seed || 100000;
+  showModal(`
+    <h3>💰 시드 변경</h3>
+    <div class="desc">
+      현재 시드: <b>$${currentSeed.toLocaleString()}</b><br>
+      새 시드 금액을 입력하세요. 유닛 크기가 자동으로 재계산됩니다.
+    </div>
+    <div class="form-row">
+      <label>새 시드 금액 (USD)</label>
+      <input type="number" id="new-seed" value="${currentSeed}" min="1000" max="10000000" step="1000">
+      <div class="sub">최소 $1,000 · 최대 $10M</div>
+    </div>
+    <div class="preview-box" id="seed-preview">
+      유닛당: <b>$${(currentSeed/20).toFixed(0)}</b> · 최대 20유닛 = $${currentSeed.toLocaleString()}
+    </div>
+    <div class="warning-box" style="display:none" id="seed-warning">
+      ⚠️ 큰 폭의 변경입니다. 진행 전 다시 한번 확인하세요.
+    </div>
+    <div class="btn-row">
+      <button class="btn secondary" onclick="closeModal()">취소</button>
+      <button class="btn success" onclick="submitSeed(${currentSeed})">변경</button>
+    </div>
+  `);
+
+  const input = document.getElementById('new-seed');
+  input.addEventListener('input', () => {
+    const val = parseFloat(input.value) || 0;
+    document.getElementById('seed-preview').innerHTML = 
+      `유닛당: <b>$${(val/20).toFixed(0)}</b> · 최대 20유닛 = $${val.toLocaleString()}`;
+    const ratio = val / currentSeed;
+    document.getElementById('seed-warning').style.display = 
+      (ratio > 2 || ratio < 0.5) ? 'block' : 'none';
+  });
+}
+
+async function submitSeed(oldSeed) {
+  const val = parseFloat(document.getElementById('new-seed').value);
+  if (!val || val < 1000) {
+    alert('최소 $1,000 이상 입력하세요');
+    return;
+  }
+  if (!confirm(`시드를 $${oldSeed.toLocaleString()} → $${val.toLocaleString()}(으)로 변경하시겠습니까?`)) return;
+
+  try {
+    await apiCall('/api/config', 'PATCH', { seed: val });
+    closeModal();
+    toast(`시드 변경됨: $${val.toLocaleString()}`);
+    fetchAll(true);
+  } catch (err) {
+    alert('변경 실패: ' + err.message);
+  }
+}
+
+// ========== 매매 중단 토글 ==========
+async function toggleTrading() {
+  const enabled = lastData?.orders?.config?.trading_enabled;
+  if (enabled) {
+    const reason = prompt('매매를 중단하는 이유를 입력하세요 (선택):', '수동 중단');
+    if (reason === null) return;
+    try {
+      await apiCall('/api/config', 'PATCH', { trading_enabled: false, emergency_stop_reason: reason });
+      toast('⛔ 매매 중단됨');
+      fetchAll(true);
+    } catch (err) {
+      alert('실패: ' + err.message);
+    }
+  } else {
+    if (!confirm('매매를 재개하시겠습니까?')) return;
+    try {
+      await apiCall('/api/config', 'PATCH', { trading_enabled: true });
+      toast('✅ 매매 재개됨');
+      fetchAll(true);
+    } catch (err) {
+      alert('실패: ' + err.message);
+    }
+  }
+}
+
+// ========== 매수 기록 모달 ==========
+function openBuyModal(suggestedOrder = null) {
+  const m = lastData.orders.market_data;
+  const v = lastData.orders.validation;
+  const today = new Date().toISOString().slice(0,10);
+  const defaultPrice = suggestedOrder?.price || m.last_close || '';
+  const defaultUnits = suggestedOrder?.units || 2;
+  const defaultZone = suggestedOrder?.zone_at_submit || m.zone;
+
+  showModal(`
+    <h3>💰 매수 체결 기록</h3>
+    <div class="desc">
+      현재 유닛: <b>${v.current_units}/20</b> · 유닛당 <b>$${v.unit_value.toFixed(0)}</b><br>
+      기록 후 해당 티어가 오픈되고 내일부터 매도 LOC가 자동 계산됩니다.
+    </div>
+
+    <div class="form-row">
+      <label>체결가 (USD)</label>
+      <input type="number" id="buy-price" value="${defaultPrice}" step="0.01" min="0.01" oninput="updateBuyPreview()">
+      <div class="sub">참고: 어제 종가 $${m.last_close}</div>
+    </div>
+
+    <div class="form-row">
+      <label>유닛 (2u = 상승일 / 4u = 하락일)</label>
+      <div class="radio-group">
+        <label class="${defaultUnits===2?'selected':''}" onclick="selectUnit(2)">
+          <input type="radio" name="buy-units" value="2" ${defaultUnits===2?'checked':''}>2U
+        </label>
+        <label class="${defaultUnits===4?'selected':''}" onclick="selectUnit(4)">
+          <input type="radio" name="buy-units" value="4" ${defaultUnits===4?'checked':''}>4U
+        </label>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>구간</label>
+      <div class="radio-group">
+        <label class="${defaultZone==='top'?'selected':''}" onclick="selectZone('top')">
+          <input type="radio" name="buy-zone" value="top" ${defaultZone==='top'?'checked':''}>천장
+        </label>
+        <label class="${defaultZone==='mid'?'selected':''}" onclick="selectZone('mid')">
+          <input type="radio" name="buy-zone" value="mid" ${defaultZone==='mid'?'checked':''}>중간
+        </label>
+        <label class="${defaultZone==='bot'?'selected':''}" onclick="selectZone('bot')">
+          <input type="radio" name="buy-zone" value="bot" ${defaultZone==='bot'?'checked':''}>바닥
+        </label>
+      </div>
+      <div class="sub">자동 감지: ${m.zone_label} (drawdown ${m.drawdown_pct}%)</div>
+    </div>
+
+    <div class="form-row">
+      <label>체결일</label>
+      <input type="text" id="buy-date" value="${today}" readonly style="opacity:0.6">
+    </div>
+
+    <div class="preview-box" id="buy-preview">...</div>
+    <div class="warning-box" style="display:none" id="buy-warning"></div>
+
+    <div class="btn-row">
+      <button class="btn secondary" onclick="closeModal()">취소</button>
+      <button class="btn success" onclick="submitBuy()">💾 기록</button>
+    </div>
+  `);
+
+  updateBuyPreview();
+}
+
+let selectedBuyUnits = 2;
+let selectedBuyZone = 'top';
+
+function selectUnit(u) {
+  selectedBuyUnits = u;
+  document.querySelectorAll('[name="buy-units"]').forEach(el => {
+    el.closest('label').classList.toggle('selected', parseInt(el.value) === u);
+    el.checked = parseInt(el.value) === u;
+  });
+  updateBuyPreview();
+}
+
+function selectZone(z) {
+  selectedBuyZone = z;
+  document.querySelectorAll('[name="buy-zone"]').forEach(el => {
+    el.closest('label').classList.toggle('selected', el.value === z);
+    el.checked = el.value === z;
+  });
+  updateBuyPreview();
+}
+
+function updateBuyPreview() {
+  const price = parseFloat(document.getElementById('buy-price')?.value) || 0;
+  const units = selectedBuyUnits;
+  const v = lastData.orders.validation;
+  const m = lastData.orders.market_data;
+
+  if (!price) {
+    document.getElementById('buy-preview').textContent = '체결가를 입력하세요';
+    return;
+  }
+
+  const shares = Math.floor((units * v.unit_value) / price);
+  const totalCost = shares * price;
+
+  document.getElementById('buy-preview').innerHTML = 
+    `${units}u × $${v.unit_value.toFixed(0)} ÷ $${price} = <b>${shares}주</b><br>` +
+    `총액 약 <b>$${totalCost.toFixed(0)}</b> · 투입 후 <b>${v.current_units + units}/20u</b>`;
+
+  // 경고 체크
+  const warn = document.getElementById('buy-warning');
+  const warnings = [];
+  if (v.current_units + units > 20) warnings.push('⚠️ TU 초과! 서버에서 거부됩니다.');
+  if (m.last_close && Math.abs(price - m.last_close) / m.last_close > 0.3) {
+    warnings.push(`⚠️ 어제 종가 $${m.last_close} 대비 30% 이상 이탈`);
+  }
+  warn.style.display = warnings.length ? 'block' : 'none';
+  warn.innerHTML = warnings.join('<br>');
+}
+
+async function submitBuy() {
+  const price = parseFloat(document.getElementById('buy-price').value);
+  const date = document.getElementById('buy-date').value;
+
+  if (!price || price <= 0) { alert('체결가를 입력하세요'); return; }
+
+  const payload = {
+    symbol: 'SOXL',
+    entry_price: price,
+    units: selectedBuyUnits,
+    entry_date: date,
+    zone: selectedBuyZone
+  };
+
+  const v = lastData.orders.validation;
+  payload.shares = Math.floor((selectedBuyUnits * v.unit_value) / price);
+
+  if (!confirm(`매수 기록: ${payload.shares}주 @ $${price} (${selectedBuyUnits}u · ${selectedBuyZone})\n\n진행할까요?`)) return;
+
+  try {
+    const result = await apiCall('/api/positions', 'POST', payload);
+    closeModal();
+    toast(`✅ T${result.summary.tier_number} 기록 완료 (${payload.shares}주)`);
+    fetchAll(true);
+  } catch (err) {
+    alert('기록 실패: ' + err.message);
+  }
+}
+
+// ========== 매도 기록 모달 ==========
+function openSellModal(positionId, forceExit = false) {
+  const pos = lastData.positions.positions.find(p => p.id === positionId);
+  if (!pos) { alert('포지션 찾을 수 없음'); return; }
+
+  const suggestedPrice = forceExit 
+    ? (lastData.orders.market_data.last_close || pos.entry_price)
+    : pos.target_sell_price;
+  const expectedPct = ((suggestedPrice - pos.entry_price) / pos.entry_price * 100).toFixed(1);
+  const today = new Date().toISOString().slice(0,10);
+
+  showModal(`
+    <h3>${forceExit ? '⚠️ 강제 청산' : '📤 매도 기록'}</h3>
+    <div class="desc">
+      <b>T${positionId}</b> · ${pos.shares}주 @ $${pos.entry_price} (${pos.zone})<br>
+      매수일 ${pos.entry_date} · D+${pos.days_elapsed}/${pos.force_exit_day}일<br>
+      추천 매도가: <b>$${suggestedPrice.toFixed(2)}</b> (${expectedPct >= 0 ? '+' : ''}${expectedPct}%)
+    </div>
+
+    <div class="form-row">
+      <label>체결가 (USD)</label>
+      <input type="number" id="sell-price" value="${suggestedPrice.toFixed(2)}" step="0.01" min="0.01" oninput="updateSellPreview(${positionId})">
+    </div>
+
+    <div class="form-row">
+      <label>체결일</label>
+      <input type="text" id="sell-date" value="${today}" readonly style="opacity:0.6">
+    </div>
+
+    <div class="preview-box" id="sell-preview">...</div>
+    ${forceExit ? '<div class="warning-box">⚠️ 강제 청산입니다. 시간 제한 초과로 MOC 시장가 매도가 권장됩니다.</div>' : ''}
+
+    <div class="btn-row">
+      <button class="btn secondary" onclick="closeModal()">취소</button>
+      <button class="btn ${forceExit?'danger':'success'}" onclick="submitSell(${positionId}, ${forceExit})">
+        ${forceExit ? '💀 강제 청산' : '💾 기록'}
+      </button>
+    </div>
+  `);
+
+  updateSellPreview(positionId);
+}
+
+function updateSellPreview(positionId) {
+  const pos = lastData.positions.positions.find(p => p.id === positionId);
+  const price = parseFloat(document.getElementById('sell-price')?.value) || 0;
+  if (!price) {
+    document.getElementById('sell-preview').textContent = '매도가를 입력하세요';
+    return;
+  }
+  const pnlPct = ((price - pos.entry_price) / pos.entry_price * 100);
+  const pnlUsd = (price - pos.entry_price) * pos.shares;
+  const color = pnlPct >= 0 ? 'var(--green)' : 'var(--red)';
+  document.getElementById('sell-preview').innerHTML = 
+    `매수가 <b>$${pos.entry_price}</b> → 매도가 <b>$${price}</b><br>` +
+    `PnL: <b style="color:${color}">${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}% ($${pnlUsd.toFixed(0)})</b>`;
+}
+
+async function submitSell(positionId, forceExit) {
+  const price = parseFloat(document.getElementById('sell-price').value);
+  const date = document.getElementById('sell-date').value;
+
+  if (!price || price <= 0) { alert('매도가를 입력하세요'); return; }
+
+  const pos = lastData.positions.positions.find(p => p.id === positionId);
+  const pnlPct = ((price - pos.entry_price) / pos.entry_price * 100);
+
+  if (!confirm(`T${positionId} 청산: ${pos.shares}주 @ $${price}\n예상 PnL: ${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%\n\n진행할까요?`)) return;
+
+  try {
+    await apiCall('/api/positions', 'PATCH', {
+      position_id: positionId,
+      exit_price: price,
+      exit_date: date,
+      force_exit: forceExit
+    });
+    closeModal();
+    toast(`✅ T${positionId} 청산 (${pnlPct >= 0 ? '+' : ''}${pnlPct.toFixed(1)}%)`);
+    fetchAll(true);
+  } catch (err) {
+    alert('실패: ' + err.message);
+  }
 }
 
 // ========== 렌더링 ==========
@@ -328,46 +677,32 @@ function render(data) {
   const m = orders.market_data;
   const v = orders.validation;
   const zone = m.zone;
-
   let html = '';
 
-  // ----- 매매 중단 배너 -----
+  // 매매 중단 배너
   if (orders.status === 'trading_disabled') {
     html += `
       <div class="banner-stop">
-        ⛔ 매매 중단됨<br>
-        <small style="font-weight:500">${orders.reason || '관리자 중단'}</small>
+        <span>⛔ ${orders.reason || '매매 중단됨'}</span>
+        <button onclick="toggleTrading()">재개</button>
       </div>
     `;
   }
 
-  // ----- Dry Run 배너 -----
   if (orders.meta?.dry_run) {
-    html += `<div class="banner-dry">🧪 DRY-RUN MODE · 실제 주문 안 나감</div>`;
+    html += `<div class="banner-dry">🧪 DRY-RUN MODE</div>`;
   }
 
-  // ----- 구간 바 -----
+  // 구간
   html += `
     <div class="zone-bar">
-      <div class="zone-box ${zone==='top'?'on on-top':''}">
-        천장
-        <div class="pct">${zone==='top' ? '🎯' : '—'}</div>
-        <div class="rule">-10% 이내</div>
-      </div>
-      <div class="zone-box ${zone==='mid'?'on on-mid':''}">
-        중간
-        <div class="pct">${zone==='mid' ? '🎯' : '—'}</div>
-        <div class="rule">-10~-15%</div>
-      </div>
-      <div class="zone-box ${zone==='bot'?'on on-bot':''}">
-        바닥
-        <div class="pct">${zone==='bot' ? '🎯' : '—'}</div>
-        <div class="rule">-15% 이상</div>
-      </div>
+      <div class="zone-box ${zone==='top'?'on on-top':''}">천장<div class="pct">${zone==='top'?'🎯':'—'}</div><div class="rule">-10% 이내</div></div>
+      <div class="zone-box ${zone==='mid'?'on on-mid':''}">중간<div class="pct">${zone==='mid'?'🎯':'—'}</div><div class="rule">-10~-15%</div></div>
+      <div class="zone-box ${zone==='bot'?'on on-bot':''}">바닥<div class="pct">${zone==='bot'?'🎯':'—'}</div><div class="rule">-15% 이상</div></div>
     </div>
   `;
 
-  // ----- 시장 상태 -----
+  // 시장 상태
   html += `
     <div class="status-card">
       <div class="card-h">
@@ -378,11 +713,21 @@ function render(data) {
       <div class="status-row"><span class="k">20일 전고</span><span class="v">$${m.high_20}</span></div>
       <div class="status-row"><span class="k">전고 대비</span><span class="v zone-${zone}">${m.drawdown_pct>0?'+':''}${m.drawdown_pct}%</span></div>
       <div class="status-row"><span class="k">구간</span><span class="v zone-${zone}">${m.zone_label} 🎯</span></div>
-      <div class="status-row"><span class="k">장 상태</span><span class="v" style="color:#888">${m.market_state}</span></div>
+      <div class="status-row">
+        <span class="k">시드</span>
+        <span class="v">$${v.seed.toLocaleString()} <button class="edit-btn" onclick="openSeedModal()">변경</button></span>
+      </div>
+      <div class="status-row">
+        <span class="k">매매 상태</span>
+        <span class="v" style="color:${orders.config?.trading_enabled?'var(--green)':'var(--red)'}">
+          ${orders.config?.trading_enabled?'ON':'OFF'}
+          <button class="edit-btn" onclick="toggleTrading()">토글</button>
+        </span>
+      </div>
     </div>
   `;
 
-  // ----- 요약 스탯 -----
+  // 스탯
   const pnlSummary = positions.summary.total_realized_pnl || 0;
   const pnlColor = pnlSummary >= 0 ? 'var(--green)' : 'var(--red)';
   html += `
@@ -394,35 +739,35 @@ function render(data) {
     </div>
   `;
 
-  // ----- 유닛 진행 바 -----
+  // 유닛 바
   const unitDots = Array.from({length: v.max_units}, (_, i) =>
     `<div class="unit-dot ${i < v.current_units ? 'filled' : ''}"></div>`
   ).join('');
-  const canBuyClass = v.can_buy ? 'ok' : 'bad';
   html += `
     <div class="valbar">
       <span>UNIT FILL</span>
       <div class="units">${unitDots}</div>
-      <span class="${canBuyClass}">${v.can_buy ? '✓ BUY OK' : '✗ TU MAX'}</span>
+      <span class="${v.can_buy?'ok':'bad'}">${v.can_buy?'✓ BUY OK':'✗ TU MAX'}</span>
     </div>
   `;
 
-  // ----- 오늘의 매수 주문 -----
+  // 매수 주문 (+ 기록 버튼)
   html += `
     <div class="card">
       <div class="card-h">
-        <div class="title">💰 매수 주문</div>
-        <div class="count">${orders.buy_orders.length}건</div>
+        <div class="title">💰 오늘의 매수 주문</div>
+        <button class="action" onclick="openBuyModal()">+ 수동 기록</button>
       </div>
   `;
   if (orders.buy_orders.length === 0) {
-    html += `<div class="empty">— 매수 주문 없음 (TU MAX) —</div>`;
+    html += `<div class="empty">— 매수 주문 없음 —</div>`;
   } else {
     orders.buy_orders.forEach((o, i) => {
       const badge = o.condition === 'always'
         ? '<span class="tag ok">무조건</span>'
         : '<span class="tag">하락시</span>';
       const klass = o.condition === 'always' ? 'buy-always' : 'buy-down';
+      const orderJson = JSON.stringify(o).replace(/'/g, "\\'");
       html += `
         <div class="order ${klass}">
           <div class="lbl">
@@ -432,6 +777,7 @@ function render(data) {
           </div>
           <div class="val">${o.type} ${o.shares}주 <span class="price">@ $${o.price}</span></div>
           <div class="desc">${o.reason} · 예상 $${(o.shares*o.price).toFixed(0)}</div>
+          <button class="record-btn" onclick='openBuyModal(${orderJson})'>✓ 이 주문 체결됨 기록</button>
         </div>
       `;
     });
@@ -443,7 +789,7 @@ function render(data) {
   }
   html += `</div>`;
 
-  // ----- 오늘의 매도 주문 (LOC) -----
+  // 매도 주문 (참고용)
   html += `
     <div class="card">
       <div class="card-h">
@@ -455,11 +801,10 @@ function render(data) {
     html += `<div class="empty">— 보유 티어 없음 —</div>`;
   } else {
     orders.sell_orders.forEach(o => {
-      const klass = `sell-${o.zone}`;
       html += `
-        <div class="order ${klass}">
+        <div class="order sell-${o.zone}">
           <div class="lbl">
-            <span>T${o.tier_idx+1}</span>
+            <span>T${o.position_id}</span>
             <span class="tag">${o.zone.toUpperCase()}</span>
             <span class="right">D+${o.days_elapsed}/${o.days_elapsed+o.days_remaining}</span>
           </div>
@@ -471,31 +816,30 @@ function render(data) {
   }
   html += `</div>`;
 
-  // ----- 강제 청산 -----
+  // 강제 청산
   if (orders.forced_exits.length > 0) {
-    html += `
-      <div class="card" style="border-color:rgba(239,68,68,0.3)">
-        <div class="card-h">
-          <div class="title" style="color:var(--red)">⚠️ 강제 청산 (MOC)</div>
-          <div class="count" style="color:var(--red)">${orders.forced_exits.length}건</div>
-        </div>
-    `;
+    html += `<div class="card" style="border-color:rgba(239,68,68,0.3)">
+      <div class="card-h">
+        <div class="title" style="color:var(--red)">⚠️ 강제 청산 필요</div>
+        <div class="count" style="color:var(--red)">${orders.forced_exits.length}건</div>
+      </div>`;
     orders.forced_exits.forEach(o => {
       html += `
         <div class="order force">
           <div class="lbl" style="color:var(--red)">
-            <span>T${o.tier_idx+1}</span>
+            <span>T${o.position_id}</span>
             <span class="tag warn">FORCE EXIT</span>
           </div>
           <div class="val">MOC ${o.shares}주 <span style="color:var(--red)">시장가</span></div>
           <div class="desc">${o.reason}</div>
+          <button class="record-btn" style="background:var(--red)" onclick="openSellModal(${o.position_id}, true)">💀 강제 청산 기록</button>
         </div>
       `;
     });
     html += `</div>`;
   }
 
-  // ----- 현재 보유 티어 -----
+  // 보유 티어 (+ 액션 버튼들)
   const openPos = positions.positions.filter(p => p.status === 'open');
   html += `
     <div class="card">
@@ -516,12 +860,10 @@ function render(data) {
         <div class="tier-item zone-${p.zone} ${alertClass}">
           <div class="top-row">
             <div class="left">
-              <span class="tid">T${i+1}</span>
+              <span class="tid">T${p.id}</span>
               <span class="info">${p.shares}주 @ $${p.entry_price}</span>
             </div>
-            <div class="pnl ${pnlClass}">
-              ${curPnl>=0?'+':''}${curPnl.toFixed(1)}%
-            </div>
+            <div class="pnl ${pnlClass}">${curPnl>=0?'+':''}${curPnl.toFixed(1)}%</div>
           </div>
           <div class="meta">
             <span class="tag">${p.units}u</span>
@@ -530,45 +872,43 @@ function render(data) {
             목표 <b style="color:var(--accent)">$${p.target_sell_price}</b>
             ${p.should_force_exit ? '<b style="color:var(--red)"> · ⚠️ FORCE</b>' : ''}
           </div>
+          <div class="actions">
+            <button class="sell-btn" onclick="openSellModal(${p.id}, false)">📤 매도</button>
+            ${p.should_force_exit ? `<button class="force-btn" onclick="openSellModal(${p.id}, true)">💀 강제</button>` : ''}
+          </div>
         </div>
       `;
     });
   }
   html += `</div>`;
 
-  // ----- 최근 종료된 티어 (있으면) -----
+  // 최근 청산
   const closedPos = positions.positions.filter(p => p.status === 'closed').slice(0, 5);
   if (closedPos.length > 0) {
-    html += `
-      <div class="card">
-        <div class="card-h">
-          <div class="title">📜 최근 청산 (최대 5개)</div>
-          <div class="count">총 ${positions.summary.closed_count}건</div>
-        </div>
-    `;
+    html += `<div class="card">
+      <div class="card-h">
+        <div class="title">📜 최근 청산</div>
+        <div class="count">${positions.summary.closed_count}건 중 5개</div>
+      </div>`;
     closedPos.forEach(p => {
       const pnlClass = (Number(p.realized_pct) || 0) >= 0 ? 'up' : 'dn';
       html += `
         <div class="tier-item zone-${p.zone}" style="opacity:0.7">
           <div class="top-row">
             <div class="left">
-              <span class="tid" style="opacity:0.6">done</span>
+              <span class="tid" style="opacity:0.6">✓</span>
               <span class="info">${p.shares}주 · $${p.entry_price}→$${p.exit_price}</span>
             </div>
-            <div class="pnl ${pnlClass}">
-              ${p.realized_pct>=0?'+':''}${p.realized_pct}%
-            </div>
+            <div class="pnl ${pnlClass}">${p.realized_pct>=0?'+':''}${p.realized_pct}%</div>
           </div>
-          <div class="meta">
-            ${p.entry_date} → ${p.exit_date} · $${p.realized_pnl>=0?'+':''}${p.realized_pnl}
-          </div>
+          <div class="meta">${p.entry_date} → ${p.exit_date} · $${p.realized_pnl>=0?'+':''}${p.realized_pnl}</div>
         </div>
       `;
     });
     html += `</div>`;
   }
 
-  // ----- Raw JSON 토글 -----
+  // Raw JSON
   html += `
     <div class="raw-toggle">
       <a onclick="toggleRaw()">⟨/⟩ RAW JSON</a>
@@ -578,11 +918,10 @@ function render(data) {
 
   document.getElementById('result').innerHTML = html;
 
-  // 하단 새로고침 바 표시
   const refreshBar = document.getElementById('refresh-bar');
   refreshBar.style.display = 'flex';
   document.getElementById('last-updated').textContent =
-    `업데이트 ${new Date().toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+    `업데이트 ${new Date().toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
 }
 
 function toggleRaw() {
