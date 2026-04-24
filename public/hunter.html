@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>HUNTER · Live Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08080a;--card:#111118;--card2:#1a1a1f;--border:#222233;
+  --accent:#3b82f6;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;
+  --text:#f0f0f0;--dim:#666;--radius:16px;
+  --top:#a78bfa;--mid:#3b82f6;--bot:#22c55e;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  background:var(--bg);
+  background-image:
+    radial-gradient(circle at 20% 10%,rgba(59,130,246,0.04),transparent 40%),
+    radial-gradient(circle at 80% 90%,rgba(167,139,250,0.04),transparent 40%);
+  color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;
+  padding:12px;max-width:520px;margin:0 auto;
+}
+
+/* ===== HEADER ===== */
+.hdr{text-align:center;padding:16px 0 12px;position:relative}
+.hdr h1{font-family:'Bebas Neue',sans-serif;font-size:30px;letter-spacing:4px;color:#fff}
+.hdr h1 span{color:var(--accent)}
+.hdr .stats{font-family:'JetBrains Mono',monospace;font-size:10px;margin-top:4px;color:var(--green);letter-spacing:1.5px;font-weight:700}
+.hdr .nav{display:flex;gap:6px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+.nav-link{background:var(--card2);color:var(--accent);padding:5px 10px;border-radius:6px;text-decoration:none;font-size:10px;font-weight:700;border:1px solid var(--border);letter-spacing:0.5px}
+.nav-link.active{background:var(--accent);color:#fff}
+
+/* ===== AUTH GATE ===== */
+.auth-gate{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px;margin-bottom:14px}
+.auth-gate .title{font-size:12px;color:var(--accent);letter-spacing:2px;font-weight:700;margin-bottom:12px;text-transform:uppercase}
+.auth-gate input{width:100%;background:#0a0a0f;border:2px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:13px;outline:none;-webkit-appearance:none}
+.auth-gate input:focus{border-color:var(--accent)}
+.auth-gate .help{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5}
+.auth-gate .help code{background:#0a0a0f;padding:2px 6px;border-radius:4px;color:var(--amber);font-size:10px}
+
+.btn{width:100%;padding:13px;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;color:#fff;background:var(--accent);transition:opacity 0.2s,transform 0.1s}
+.btn:active{transform:scale(0.98)}
+.btn:disabled{opacity:0.5;cursor:wait}
+.btn.secondary{background:var(--card2);color:var(--dim);border:1px solid var(--border)}
+.btn.danger{background:#1a0a0a;color:var(--red);border:1px solid var(--red)}
+
+/* ===== LOADER ===== */
+.loader-wrap{text-align:center;padding:60px 20px;color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:1.5px}
+.loader{display:inline-block;width:14px;height:14px;margin-right:10px;border:2px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== ERROR ===== */
+.error-box{background:linear-gradient(135deg,#1a0a0a,#0a0a0a);border:1px solid var(--red);border-radius:12px;padding:16px;color:var(--red);font-weight:600;margin-bottom:12px;font-size:13px;line-height:1.5}
+.error-box .t{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:2px;margin-bottom:8px;opacity:0.8}
+.error-box code{display:block;background:#0a0a0f;padding:8px;border-radius:6px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#fbbf24;word-break:break-all}
+.error-box .hint{margin-top:10px;font-size:12px;font-weight:500;color:#fca5a5;padding-top:10px;border-top:1px solid rgba(239,68,68,0.2)}
+
+/* ===== ZONE BAR ===== */
+.zone-bar{display:flex;gap:6px;margin-bottom:12px}
+.zone-box{flex:1;padding:14px 6px;border-radius:12px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;text-align:center;border:2px solid var(--border);background:var(--card);color:var(--dim);letter-spacing:1px}
+.zone-box.on{background:linear-gradient(135deg,#0a0a0f,var(--card));box-shadow:0 0 24px rgba(59,130,246,0.25)}
+.zone-box.on-top{border-color:var(--top);color:var(--top)}
+.zone-box.on-mid{border-color:var(--mid);color:var(--mid)}
+.zone-box.on-bot{border-color:var(--bot);color:var(--bot)}
+.zone-box .pct{font-size:14px;margin-top:4px;font-weight:800}
+.zone-box .rule{font-size:9px;margin-top:3px;opacity:0.7}
+.zone-box.on .pct{font-size:18px}
+
+/* ===== CARDS & STATUS ===== */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:10px}
+.card-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.card-h .title{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);letter-spacing:2px;text-transform:uppercase;font-weight:700}
+.card-h .count{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:800}
+
+.status-card{background:linear-gradient(135deg,#0a0a0f,var(--card));border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:10px}
+.status-row{display:flex;justify-content:space-between;align-items:center;margin:5px 0}
+.status-row .k{font-size:12px;color:var(--dim)}
+.status-row .v{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800}
+.zone-top{color:var(--top)}
+.zone-mid{color:var(--mid)}
+.zone-bot{color:var(--bot)}
+
+/* ===== STATS GRID ===== */
+.sg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px}
+.sb{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 6px;text-align:center}
+.sb .v{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:800}
+.sb .l{font-size:9px;color:var(--dim);margin-top:3px;font-weight:600;letter-spacing:1px;text-transform:uppercase}
+
+/* ===== ORDER CARDS ===== */
+.order{border-radius:10px;padding:12px;margin-bottom:8px;border:1px solid var(--border);background:#0a0a0f;position:relative;overflow:hidden}
+.order.buy-always{border-left:3px solid var(--green)}
+.order.buy-down{border-left:3px solid var(--amber)}
+.order.sell-top{border-left:3px solid var(--top)}
+.order.sell-mid{border-left:3px solid var(--mid)}
+.order.sell-bot{border-left:3px solid var(--bot)}
+.order.force{border-left:3px solid var(--red);background:rgba(239,68,68,0.04)}
+.order .lbl{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;gap:6px}
+.order .tag{display:inline-block;padding:2px 6px;background:var(--card2);border-radius:4px;font-size:9px;color:var(--dim);font-family:'JetBrains Mono',monospace;letter-spacing:0.5px;text-transform:uppercase}
+.order .tag.warn{background:rgba(239,68,68,0.1);color:var(--red)}
+.order .tag.ok{background:rgba(34,197,94,0.1);color:var(--green)}
+.order .val{font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:800;color:var(--text);margin-top:5px}
+.order .val .price{color:var(--accent)}
+.order .desc{font-size:11px;color:var(--dim);margin-top:5px;line-height:1.4}
+.order .right{float:right;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);margin-top:-2px}
+
+.empty{text-align:center;color:#444;padding:16px;font-size:11px;font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+
+/* ===== POSITIONS LIST ===== */
+.tier-item{background:#0a0a0f;border:1px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:6px;position:relative}
+.tier-item.zone-top{border-left:3px solid var(--top)}
+.tier-item.zone-mid{border-left:3px solid var(--mid)}
+.tier-item.zone-bot{border-left:3px solid var(--bot)}
+.tier-item .top-row{display:flex;justify-content:space-between;align-items:center}
+.tier-item .left{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tier-item .tid{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);font-weight:800;background:var(--card2);padding:2px 6px;border-radius:4px}
+.tier-item .info{font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:700}
+.tier-item .pnl{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:800}
+.tier-item .pnl.up{color:var(--green)}
+.tier-item .pnl.dn{color:var(--red)}
+.tier-item .meta{font-size:10px;color:var(--dim);margin-top:5px;font-family:'JetBrains Mono',monospace;line-height:1.5}
+.tier-item .meta .tag{display:inline-block;padding:1px 5px;background:var(--card2);border-radius:3px;font-size:9px;margin-right:4px}
+.tier-item.alert{background:rgba(239,68,68,0.04)}
+.tier-item.alert .tid{background:var(--red);color:#fff}
+
+/* ===== VALIDATION BAR ===== */
+.valbar{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px}
+.valbar .ok{color:var(--green)}
+.valbar .warn{color:var(--amber)}
+.valbar .bad{color:var(--red)}
+.valbar .units{display:flex;gap:1px;flex:1;max-width:180px;margin:0 12px}
+.valbar .unit-dot{flex:1;height:6px;background:var(--card2);border-radius:1px}
+.valbar .unit-dot.filled{background:var(--accent)}
+
+/* ===== REFRESH BAR ===== */
+.refresh-bar{position:sticky;bottom:10px;background:rgba(17,17,24,0.95);backdrop-filter:blur(10px);border:1px solid var(--border);border-radius:12px;padding:10px 14px;margin:14px 0;display:flex;align-items:center;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim)}
+.refresh-bar .auto{display:flex;align-items:center;gap:8px}
+.refresh-bar .dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.refresh-bar button{background:var(--accent);color:#fff;border:none;padding:6px 12px;border-radius:6px;font-family:inherit;font-size:11px;font-weight:700;cursor:pointer}
+.refresh-bar button:hover{opacity:0.9}
+
+.raw-toggle{text-align:center;margin-top:12px}
+.raw-toggle a{color:var(--dim);font-size:10px;text-decoration:underline;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+.raw-json{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-top:8px;font-family:'JetBrains Mono',monospace;font-size:10px;color:#888;max-height:300px;overflow:auto;white-space:pre-wrap;word-break:break-all;display:none}
+
+.footer{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:#333;margin:16px 0;letter-spacing:1px}
+
+/* Trading disabled banner */
+.banner-stop{background:#1a0a0a;border:1px solid var(--red);border-radius:10px;padding:12px;color:var(--red);font-weight:700;text-align:center;font-size:13px;margin-bottom:10px}
+
+/* Dry run banner */
+.banner-dry{background:rgba(245,158,11,0.08);border:1px solid var(--amber);border-radius:10px;padding:10px;color:var(--amber);font-weight:600;text-align:center;font-size:11px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;letter-spacing:1px}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <h1>HUNTER <span>LIVE</span></h1>
+  <div class="stats">API · SUPABASE · REALTIME</div>
+  <div class="nav">
+    <a href="/" class="nav-link">HOME</a>
+    <a href="/v11.html" class="nav-link">v11</a>
+    <a href="/bt.html" class="nav-link">BT</a>
+    <a href="/hunter.html" class="nav-link active">LIVE</a>
+  </div>
+</div>
+
+<!-- 인증 화면 (키 없을 때만) -->
+<div id="auth-gate" class="auth-gate" style="display:none">
+  <div class="title">🔑 API 인증</div>
+  <input type="password" id="secret-input" placeholder="HUNTER_API_SECRET 붙여넣기" autocomplete="off">
+  <div class="help">
+    메모에 저장한 <code>HUNTER_API_SECRET</code> 값을 입력하세요.<br>
+    이 브라우저에 저장되며 다음 접속 시 자동 로드됩니다.
+  </div>
+  <button class="btn" onclick="saveAndFetch()">🚀 대시보드 열기</button>
+</div>
+
+<!-- 결과 화면 -->
+<div id="result"></div>
+
+<!-- 새로고침 바 (항상 하단 고정) -->
+<div id="refresh-bar" class="refresh-bar" style="display:none">
+  <div class="auto">
+    <span class="dot"></span>
+    <span id="last-updated">--</span>
+  </div>
+  <div>
+    <button onclick="fetchAll(true)">🔄 새로고침</button>
+    <button class="btn danger" style="background:transparent;width:auto;padding:6px 10px;margin:0 0 0 6px;font-size:11px" onclick="clearSecret()">🗑️</button>
+  </div>
+</div>
+
+<div class="footer">HUNTER v8 · SOXL · API-Powered</div>
+
+<script>
+const API_BASE = 'https://soxl-hunter.vercel.app';
+const STORAGE_KEY = 'hunter-api-secret-v2';
+const AUTO_REFRESH_MS = 60000; // 60초 자동 갱신
+
+let autoRefreshTimer = null;
+let lastData = null;
+
+// ========== 초기화 ==========
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) {
+    fetchAll();
+  } else {
+    document.getElementById('auth-gate').style.display = 'block';
+  }
+});
+
+window.addEventListener('beforeunload', () => {
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+});
+
+// ========== 인증 ==========
+function saveAndFetch() {
+  const secret = document.getElementById('secret-input').value.trim();
+  if (!secret) {
+    alert('API Secret을 입력하세요');
+    return;
+  }
+  localStorage.setItem(STORAGE_KEY, secret);
+  document.getElementById('auth-gate').style.display = 'none';
+  fetchAll();
+}
+
+function clearSecret() {
+  if (!confirm('저장된 API Secret을 삭제할까요?\n(다시 로그인해야 합니다)')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+  location.reload();
+}
+
+// ========== API 호출 ==========
+async function fetchAll(manualRefresh = false) {
+  const secret = localStorage.getItem(STORAGE_KEY);
+  if (!secret) {
+    document.getElementById('auth-gate').style.display = 'block';
+    return;
+  }
+
+  const result = document.getElementById('result');
+  if (!lastData || manualRefresh) {
+    result.innerHTML = '<div class="loader-wrap"><span class="loader"></span>LOADING...</div>';
+  }
+
+  try {
+    // today-orders와 positions 병렬 호출
+    const [ordersRes, positionsRes] = await Promise.all([
+      fetch(API_BASE + '/api/today-orders', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + secret,
+          'Content-Type': 'application/json'
+        }
+      }),
+      fetch(API_BASE + '/api/positions?all=true', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + secret,
+          'Content-Type': 'application/json'
+        }
+      })
+    ]);
+
+    const ordersData = await ordersRes.json();
+    const positionsData = await positionsRes.json();
+
+    if (!ordersRes.ok || ordersData.error) {
+      showError(ordersRes.status, ordersData, 'today-orders');
+      return;
+    }
+    if (!positionsRes.ok || positionsData.error) {
+      showError(positionsRes.status, positionsData, 'positions');
+      return;
+    }
+
+    lastData = { orders: ordersData, positions: positionsData };
+    render(lastData);
+    startAutoRefresh();
+  } catch (err) {
+    document.getElementById('result').innerHTML = `
+      <div class="error-box">
+        <div class="t">NETWORK ERROR</div>
+        ${err.message}
+      </div>
+    `;
+  }
+}
+
+function startAutoRefresh() {
+  if (autoRefreshTimer) clearInterval(autoRefreshTimer);
+  autoRefreshTimer = setInterval(() => fetchAll(false), AUTO_REFRESH_MS);
+}
+
+// ========== 에러 표시 ==========
+function showError(status, data, api) {
+  const result = document.getElementById('result');
+  let hint = '';
+
+  if (status === 401) {
+    hint = 'API Secret이 틀렸습니다. 🗑️ 버튼으로 삭제 후 재입력.';
+  } else if (data.detail?.includes('Invalid API key')) {
+    hint = 'Supabase 키 이슈. Vercel 환경변수 확인 필요.';
+  } else if (data.detail?.includes('fetchMarketData')) {
+    hint = '주가 조회 실패. 주말이거나 야후 API 이슈.';
+  }
+
+  result.innerHTML = `
+    <div class="error-box">
+      <div class="t">HTTP ${status} · ${api} · ${data.error || 'UNKNOWN'}</div>
+      ${data.detail ? `<code>${data.detail}</code>` : ''}
+      ${hint ? `<div class="hint">${hint}</div>` : ''}
+      <button class="btn danger" style="margin-top:12px" onclick="fetchAll(true)">🔄 재시도</button>
+    </div>
+  `;
+}
+
+// ========== 렌더링 ==========
+function render(data) {
+  const { orders, positions } = data;
+  const m = orders.market_data;
+  const v = orders.validation;
+  const zone = m.zone;
+
+  let html = '';
+
+  // ----- 매매 중단 배너 -----
+  if (orders.status === 'trading_disabled') {
+    html += `
+      <div class="banner-stop">
+        ⛔ 매매 중단됨<br>
+        <small style="font-weight:500">${orders.reason || '관리자 중단'}</small>
+      </div>
+    `;
+  }
+
+  // ----- Dry Run 배너 -----
+  if (orders.meta?.dry_run) {
+    html += `<div class="banner-dry">🧪 DRY-RUN MODE · 실제 주문 안 나감</div>`;
+  }
+
+  // ----- 구간 바 -----
+  html += `
+    <div class="zone-bar">
+      <div class="zone-box ${zone==='top'?'on on-top':''}">
+        천장
+        <div class="pct">${zone==='top' ? '🎯' : '—'}</div>
+        <div class="rule">-10% 이내</div>
+      </div>
+      <div class="zone-box ${zone==='mid'?'on on-mid':''}">
+        중간
+        <div class="pct">${zone==='mid' ? '🎯' : '—'}</div>
+        <div class="rule">-10~-15%</div>
+      </div>
+      <div class="zone-box ${zone==='bot'?'on on-bot':''}">
+        바닥
+        <div class="pct">${zone==='bot' ? '🎯' : '—'}</div>
+        <div class="rule">-15% 이상</div>
+      </div>
+    </div>
+  `;
+
+  // ----- 시장 상태 -----
+  html += `
+    <div class="status-card">
+      <div class="card-h">
+        <div class="title">📊 시장 데이터</div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim)">${m.last_data_date}</div>
+      </div>
+      <div class="status-row"><span class="k">${orders.symbol} 종가</span><span class="v">$${m.last_close}</span></div>
+      <div class="status-row"><span class="k">20일 전고</span><span class="v">$${m.high_20}</span></div>
+      <div class="status-row"><span class="k">전고 대비</span><span class="v zone-${zone}">${m.drawdown_pct>0?'+':''}${m.drawdown_pct}%</span></div>
+      <div class="status-row"><span class="k">구간</span><span class="v zone-${zone}">${m.zone_label} 🎯</span></div>
+      <div class="status-row"><span class="k">장 상태</span><span class="v" style="color:#888">${m.market_state}</span></div>
+    </div>
+  `;
+
+  // ----- 요약 스탯 -----
+  const pnlSummary = positions.summary.total_realized_pnl || 0;
+  const pnlColor = pnlSummary >= 0 ? 'var(--green)' : 'var(--red)';
+  html += `
+    <div class="sg">
+      <div class="sb"><div class="v">$${(v.seed/1000).toFixed(0)}K</div><div class="l">SEED</div></div>
+      <div class="sb"><div class="v">${v.current_units}/${v.max_units}</div><div class="l">UNITS</div></div>
+      <div class="sb"><div class="v">${positions.summary.open_count}</div><div class="l">OPEN</div></div>
+      <div class="sb"><div class="v" style="color:${pnlColor};font-size:13px">${pnlSummary>=0?'+':''}$${Math.abs(pnlSummary).toFixed(0)}</div><div class="l">REALIZED</div></div>
+    </div>
+  `;
+
+  // ----- 유닛 진행 바 -----
+  const unitDots = Array.from({length: v.max_units}, (_, i) =>
+    `<div class="unit-dot ${i < v.current_units ? 'filled' : ''}"></div>`
+  ).join('');
+  const canBuyClass = v.can_buy ? 'ok' : 'bad';
+  html += `
+    <div class="valbar">
+      <span>UNIT FILL</span>
+      <div class="units">${unitDots}</div>
+      <span class="${canBuyClass}">${v.can_buy ? '✓ BUY OK' : '✗ TU MAX'}</span>
+    </div>
+  `;
+
+  // ----- 오늘의 매수 주문 -----
+  html += `
+    <div class="card">
+      <div class="card-h">
+        <div class="title">💰 매수 주문</div>
+        <div class="count">${orders.buy_orders.length}건</div>
+      </div>
+  `;
+  if (orders.buy_orders.length === 0) {
+    html += `<div class="empty">— 매수 주문 없음 (TU MAX) —</div>`;
+  } else {
+    orders.buy_orders.forEach((o, i) => {
+      const badge = o.condition === 'always'
+        ? '<span class="tag ok">무조건</span>'
+        : '<span class="tag">하락시</span>';
+      const klass = o.condition === 'always' ? 'buy-always' : 'buy-down';
+      html += `
+        <div class="order ${klass}">
+          <div class="lbl">
+            <span>${o.tier_label.replace(/_/g, ' ').toUpperCase()}</span>
+            ${badge}
+            <span class="right">${o.units}u</span>
+          </div>
+          <div class="val">${o.type} ${o.shares}주 <span class="price">@ $${o.price}</span></div>
+          <div class="desc">${o.reason} · 예상 $${(o.shares*o.price).toFixed(0)}</div>
+        </div>
+      `;
+    });
+    html += `
+      <div style="text-align:right;padding-top:8px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);border-top:1px solid var(--border);margin-top:4px;padding-top:8px">
+        총 예상 <b style="color:var(--accent)">$${v.total_buy_usd.toLocaleString()}</b> · ${(v.total_buy_usd/v.seed*100).toFixed(1)}% of seed
+      </div>
+    `;
+  }
+  html += `</div>`;
+
+  // ----- 오늘의 매도 주문 (LOC) -----
+  html += `
+    <div class="card">
+      <div class="card-h">
+        <div class="title">📤 매도 주문 (LOC)</div>
+        <div class="count">${orders.sell_orders.length}건</div>
+      </div>
+  `;
+  if (orders.sell_orders.length === 0) {
+    html += `<div class="empty">— 보유 티어 없음 —</div>`;
+  } else {
+    orders.sell_orders.forEach(o => {
+      const klass = `sell-${o.zone}`;
+      html += `
+        <div class="order ${klass}">
+          <div class="lbl">
+            <span>T${o.tier_idx+1}</span>
+            <span class="tag">${o.zone.toUpperCase()}</span>
+            <span class="right">D+${o.days_elapsed}/${o.days_elapsed+o.days_remaining}</span>
+          </div>
+          <div class="val">LOC ${o.shares}주 <span class="price">@ $${o.price}</span></div>
+          <div class="desc">매수가 $${o.entry_price} → +${o.target_pct.toFixed(1)}% · 잔여 ${o.days_remaining}일</div>
+        </div>
+      `;
+    });
+  }
+  html += `</div>`;
+
+  // ----- 강제 청산 -----
+  if (orders.forced_exits.length > 0) {
+    html += `
+      <div class="card" style="border-color:rgba(239,68,68,0.3)">
+        <div class="card-h">
+          <div class="title" style="color:var(--red)">⚠️ 강제 청산 (MOC)</div>
+          <div class="count" style="color:var(--red)">${orders.forced_exits.length}건</div>
+        </div>
+    `;
+    orders.forced_exits.forEach(o => {
+      html += `
+        <div class="order force">
+          <div class="lbl" style="color:var(--red)">
+            <span>T${o.tier_idx+1}</span>
+            <span class="tag warn">FORCE EXIT</span>
+          </div>
+          <div class="val">MOC ${o.shares}주 <span style="color:var(--red)">시장가</span></div>
+          <div class="desc">${o.reason}</div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  }
+
+  // ----- 현재 보유 티어 -----
+  const openPos = positions.positions.filter(p => p.status === 'open');
+  html += `
+    <div class="card">
+      <div class="card-h">
+        <div class="title">🎯 보유 티어</div>
+        <div class="count">${openPos.length}개 · ${v.current_units}u</div>
+      </div>
+  `;
+  if (openPos.length === 0) {
+    html += `<div class="empty">— 보유 티어 없음 —</div>`;
+  } else {
+    openPos.forEach((p, i) => {
+      const curPnl = m.last_close ? ((m.last_close - p.entry_price) / p.entry_price * 100) : 0;
+      const pnlClass = curPnl >= 0 ? 'up' : 'dn';
+      const alertClass = p.should_force_exit ? 'alert' : '';
+
+      html += `
+        <div class="tier-item zone-${p.zone} ${alertClass}">
+          <div class="top-row">
+            <div class="left">
+              <span class="tid">T${i+1}</span>
+              <span class="info">${p.shares}주 @ $${p.entry_price}</span>
+            </div>
+            <div class="pnl ${pnlClass}">
+              ${curPnl>=0?'+':''}${curPnl.toFixed(1)}%
+            </div>
+          </div>
+          <div class="meta">
+            <span class="tag">${p.units}u</span>
+            <span class="tag">${p.zone.toUpperCase()}</span>
+            ${p.entry_date} · D+${p.days_elapsed}/${p.force_exit_day}일 ·
+            목표 <b style="color:var(--accent)">$${p.target_sell_price}</b>
+            ${p.should_force_exit ? '<b style="color:var(--red)"> · ⚠️ FORCE</b>' : ''}
+          </div>
+        </div>
+      `;
+    });
+  }
+  html += `</div>`;
+
+  // ----- 최근 종료된 티어 (있으면) -----
+  const closedPos = positions.positions.filter(p => p.status === 'closed').slice(0, 5);
+  if (closedPos.length > 0) {
+    html += `
+      <div class="card">
+        <div class="card-h">
+          <div class="title">📜 최근 청산 (최대 5개)</div>
+          <div class="count">총 ${positions.summary.closed_count}건</div>
+        </div>
+    `;
+    closedPos.forEach(p => {
+      const pnlClass = (Number(p.realized_pct) || 0) >= 0 ? 'up' : 'dn';
+      html += `
+        <div class="tier-item zone-${p.zone}" style="opacity:0.7">
+          <div class="top-row">
+            <div class="left">
+              <span class="tid" style="opacity:0.6">done</span>
+              <span class="info">${p.shares}주 · $${p.entry_price}→$${p.exit_price}</span>
+            </div>
+            <div class="pnl ${pnlClass}">
+              ${p.realized_pct>=0?'+':''}${p.realized_pct}%
+            </div>
+          </div>
+          <div class="meta">
+            ${p.entry_date} → ${p.exit_date} · $${p.realized_pnl>=0?'+':''}${p.realized_pnl}
+          </div>
+        </div>
+      `;
+    });
+    html += `</div>`;
+  }
+
+  // ----- Raw JSON 토글 -----
+  html += `
+    <div class="raw-toggle">
+      <a onclick="toggleRaw()">⟨/⟩ RAW JSON</a>
+    </div>
+    <pre id="raw-json" class="raw-json">${JSON.stringify(data, null, 2)}</pre>
+  `;
+
+  document.getElementById('result').innerHTML = html;
+
+  // 하단 새로고침 바 표시
+  const refreshBar = document.getElementById('refresh-bar');
+  refreshBar.style.display = 'flex';
+  document.getElementById('last-updated').textContent =
+    `업데이트 ${new Date().toLocaleTimeString('ko-KR', {hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+}
+
+function toggleRaw() {
+  const el = document.getElementById('raw-json');
+  el.style.display = el.style.display === 'none' || !el.style.display ? 'block' : 'none';
+}
+</script>
+</body>
+</html>
